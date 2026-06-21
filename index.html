@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GallaMaster 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">GM</div>
+      <div class="brand-text">
+        <div class="brand-name">GallaMaster</div>
+        <div class="brand-version">v2.0</div>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Mercado</div>
+      <button class="nav-item active" data-tab="recursos">
+        <span class="nav-icon">◧</span> Recursos
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Em breve</div>
+      <button class="nav-item" disabled><span class="nav-icon">⚒</span> Craft Comparativo</button>
+      <button class="nav-item" disabled><span class="nav-icon">▤</span> Base de Itens</button>
+      <button class="nav-item" disabled><span class="nav-icon">◎</span> Re-gears</button>
+      <button class="nav-item" disabled><span class="nav-icon">📋</span> Pedidos</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="content">
+    <section id="tab-recursos" class="tab active">
+      <header class="tab-header">
+        <div>
+          <h1>Recursos</h1>
+          <p class="tab-sub">Preços de mercado via Albion Online Data Project</p>
+        </div>
+        <div class="header-actions">
+          <select id="server-select" class="select">
+            <option value="west">Américas (West)</option>
+            <option value="europe">Europa</option>
+            <option value="east">Ásia (East)</option>
+          </select>
+          <button id="refresh-btn" class="btn btn-primary">
+            <span class="btn-icon">↻</span> Atualizar Preços
+          </button>
+        </div>
+      </header>
+
+      <div id="status-bar" class="status-bar"></div>
+      <div class="city-tabs" id="city-tabs"></div>
+      <div class="resource-grid" id="resource-grid"></div>
+    </section>
+  </main>
+</div>
+
+<script src="/js/data.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
