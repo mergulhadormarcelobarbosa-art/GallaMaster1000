@@ -1,0 +1,2447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Albion Craft Intelligence Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&family=Barlow+Condensed:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--void:#080B10;--abyss:#0D1117;--deep:#131920;--surface:#1A2232;--raised:#1F2C3D;--border:#2D3F55;--muted:#3D5270;--dim:#4A6280;--subtle:#6B8BAF;--bright:#C2D5E8;--white:#E8F0F8;
+--gold:#FFC107;--gb:rgba(255,193,7,.08);--gbr:rgba(255,193,7,.25);
+--profit:#00E5A0;--pb:rgba(0,229,160,.08);--pbr:rgba(0,229,160,.25);
+--loss:#FF4D6B;--lb:rgba(255,77,107,.08);--lbr:rgba(255,77,107,.25);
+--warn:#FFB020;--info:#38BDF8;--purple:#A78BFA;--vb:rgba(167,139,250,.08);--vbr:rgba(167,139,250,.25);
+}
+html,body{height:100%;background:var(--void);color:var(--bright);font-family:'DM Sans',sans-serif;font-size:13px;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--abyss)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#app{display:flex;height:100vh;overflow:hidden}
+.sb{width:220px;flex-shrink:0;background:var(--abyss);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width .3s}
+.sb.col{width:52px}
+.sbl{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;overflow:hidden}
+.sbi{width:30px;height:30px;flex-shrink:0;background:var(--gb);border:1px solid var(--gbr);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.sbn{font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--white);white-space:nowrap}
+.sbs{font-size:9px;color:var(--gold);letter-spacing:2px;white-space:nowrap}
+.nav{flex:1;overflow-y:auto;padding:8px 6px}
+.ng{margin-bottom:14px}
+.ngl{font-size:9px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;padding:0 8px;margin-bottom:4px;white-space:nowrap;overflow:hidden}
+.ni{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:7px;cursor:pointer;transition:all .15s;position:relative;user-select:none;color:var(--subtle)}
+.ni:hover{background:var(--raised);color:var(--white)}
+.ni.act{background:var(--gb);color:var(--gold)}
+.ni.act::before{content:'';position:absolute;left:0;top:20%;width:3px;height:60%;background:var(--gold);border-radius:0 2px 2px 0}
+.ni.lrn{color:var(--purple)}.ni.lrn.act{background:var(--vb)}.ni.lrn.act::before{background:var(--purple)}
+.nic{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.nil{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .3s}
+.nib{font-size:9px;background:var(--vb);border:1px solid var(--vbr);color:var(--purple);border-radius:3px;padding:1px 4px;font-weight:700}
+.sb.col .nil,.sb.col .ngl,.sb.col .sbt,.sb.col .nib{opacity:0;pointer-events:none}
+.sbb{padding:10px 6px;border-top:1px solid var(--border)}
+.sbbt{width:100%;display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;background:none;border:none;color:var(--dim);cursor:pointer;font-family:inherit;font-size:12px;transition:all .15s}
+.sbbt:hover{background:var(--raised);color:var(--bright)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{height:50px;background:var(--abyss);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 18px;flex-shrink:0}
+.ctag{font-size:11px;color:var(--gold);background:var(--gb);border:1px solid var(--gbr);border-radius:5px;padding:3px 8px}
+.fbtn{font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:var(--raised);color:var(--subtle);transition:all .15s;font-family:inherit}
+.fbtn.on{background:var(--gb);border-color:var(--gbr);color:var(--gold)}
+.mla{margin-left:auto}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;white-space:nowrap}
+.bp{background:var(--gold);color:#000}.bp:hover{background:#FFD740}
+.bs2{background:var(--raised);border:1px solid var(--border);color:var(--bright)}.bs2:hover{border-color:var(--muted)}
+.bg2{background:transparent;color:var(--subtle)}.bg2:hover{color:var(--bright);background:var(--raised)}
+.bv{background:var(--vb);border:1px solid var(--vbr);color:var(--purple)}.bv:hover{background:rgba(167,139,250,.15)}
+.bok{background:var(--pb);border:1px solid var(--pbr);color:var(--profit)}.bok:hover{background:rgba(0,229,160,.15)}
+.bdd{background:var(--lb);border:1px solid var(--lbr);color:var(--loss)}.bdd:hover{background:rgba(255,77,107,.15)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.content{flex:1;overflow-y:auto;padding:20px}
+.page{display:none;animation:fi .25s ease}.page.act{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ptit{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:3px}
+.psub{font-size:12px;color:var(--subtle);margin-bottom:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+.ctit{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;color:var(--white);margin-bottom:10px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:13px}
+.kl{font-size:9px;color:var(--subtle);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.kv{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;font-variant-numeric:tabular-nums}
+.ks{font-size:10px;color:var(--dim);margin-top:3px}
+.tc{display:inline-flex;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;padding:2px 6px}
+.t2{background:#1F2B1F;color:#7CB87C}.t3{background:#1F1F2B;color:#7C7CB8}.t4{background:#2B1F2B;color:#C050C0}.t5{background:#1F2535;color:#5080C0}.t6{background:#1F2B2B;color:#50C0C0}.t7{background:#2B2020;color:#E06060}.t8{background:#2B2510;color:#FFC107;border:1px solid rgba(255,193,7,.2)}
+.num{font-family:'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}
+.ptx{color:var(--profit);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
+.ltx{color:var(--loss);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-variant-numeric:tabular-nums}
+.gtx{color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums}
+.dtx{color:var(--dim);font-family:'Barlow Condensed',sans-serif}
+.bpr{display:inline-flex;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:800;letter-spacing:.5px;background:var(--pb);border:1px solid var(--pbr);color:var(--profit)}
+.bna{background:var(--lb);border:1px solid var(--lbr);color:var(--loss);display:inline-flex;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:800}
+.dban{border-radius:10px;padding:16px;text-align:center;font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:1px;margin-bottom:14px}
+.dy{background:var(--pb);border:1px solid var(--pbr);color:var(--profit)}.dn{background:var(--lb);border:1px solid var(--lbr);color:var(--loss)}
+.tw{overflow-x:auto;border-radius:9px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{border-bottom:1px solid var(--border)}
+thead th{padding:8px 11px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--subtle);font-weight:500;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--bright)}
+tbody tr{border-bottom:1px solid rgba(45,63,85,.4);transition:background .1s}
+tbody tr:hover{background:rgba(31,44,61,.7)}
+tbody td{padding:8px 11px;white-space:nowrap}
+.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fsel{background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:5px 10px;font-size:11px;font-family:inherit;outline:none;appearance:none;cursor:pointer}
+.fsel:focus{border-color:var(--gold)}
+.finp{background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:5px 10px;font-size:11px;font-family:inherit;outline:none}
+.finp:focus{border-color:var(--gold)}
+.schp{background:var(--deep);border:1px solid var(--border);color:var(--subtle);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.schp.act{background:var(--gb);border-color:var(--gbr);color:var(--gold)}
+.fd{margin-bottom:10px}
+.fd label{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--subtle);margin-bottom:4px}
+.fd input,.fd select,.fd textarea{width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;transition:border-color .15s}
+.fd input:focus,.fd select:focus,.fd textarea:focus{border-color:var(--gold)}
+.fd textarea{resize:vertical;min-height:56px}
+.br{display:flex;justify-content:space-between;padding:5px 0;font-size:12px}
+.br.sep{border-top:1px solid var(--border);margin-top:4px;padding-top:8px;font-weight:600}
+.br.ind{padding-left:16px}.br .lb{color:var(--subtle)}
+.cbar{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.cbl{font-size:11px;color:var(--subtle);width:100px;text-align:right;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cbbg{flex:1;height:16px;background:var(--deep);border-radius:3px;overflow:hidden}
+.cbf{height:100%;border-radius:3px;display:flex;align-items:center;padding-right:5px;justify-content:flex-end;transition:width .7s cubic-bezier(.16,1,.3,1)}
+.cbv{font-size:10px;font-weight:700;font-family:'Barlow Condensed',sans-serif;color:rgba(0,0,0,.75)}
+.tsw{width:38px;height:21px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tsw.on{background:var(--profit)}.tsw.off{background:var(--muted)}
+.tsw::after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;top:3px;transition:left .2s}
+.tsw.on::after{left:20px}.tsw.off::after{left:3px}
+.alr{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--deep);border-radius:7px;margin-bottom:6px;border:1px solid var(--border)}
+.ald{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ald.on{background:var(--profit);box-shadow:0 0 6px var(--profit)}.ald.off{background:var(--dim)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--profit);animation:pls 2s infinite;display:inline-block}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+/* APRENDIZADO */
+.lhdr{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,var(--vb),rgba(167,139,250,.02));border:1px solid var(--vbr);border-radius:12px;padding:16px 20px;margin-bottom:20px}
+.dz{border:2px dashed var(--border);border-radius:14px;padding:48px 32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--deep);position:relative}
+.dz:hover,.dz.ov{border-color:var(--purple);background:var(--vb)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pimg{width:100%;max-height:260px;object-fit:contain;border-radius:8px;border:1px solid var(--border);background:var(--deep)}
+.ocrs{border-radius:10px;padding:14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;font-size:13px}
+.ocrs.prc{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);color:var(--info)}
+.ocrs.rev{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);color:var(--warn)}
+.ocrs.ok{background:var(--pb);border:1px solid var(--pbr);color:var(--profit)}
+.spin{width:18px;height:18px;border:2px solid rgba(56,189,248,.3);border-top-color:var(--info);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+.rvt{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+/* MATERIAIS ROW */
+.mr{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--deep);border-radius:7px;margin-bottom:5px;border:1px solid var(--border);transition:border-color .15s}
+.mr:hover{border-color:var(--muted)}
+.mr input{background:var(--surface);border:1px solid var(--border);color:var(--bright);border-radius:5px;padding:4px 8px;font-size:12px;font-family:inherit;outline:none}
+.mr input:focus{border-color:var(--gold)}
+.mr .mq{width:70px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px}
+.mr .mnn{flex:1;min-width:80px}
+.mr .mts{width:66px;appearance:none;font-size:11px;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--bright);border-radius:5px;padding:4px 6px;font-family:inherit;outline:none}
+.mr .rmb{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 4px;line-height:1}.mr .rmb:hover{color:var(--loss)}
+.amb{width:100%;padding:8px;border:1px dashed var(--border);border-radius:7px;background:none;color:var(--dim);cursor:pointer;font-family:inherit;font-size:12px;transition:all .15s;margin-top:4px}
+.amb:hover{border-color:var(--purple);color:var(--purple);background:var(--vb)}
+.cfb{height:6px;background:var(--deep);border-radius:3px;overflow:hidden;margin-top:6px}
+.cff{height:100%;border-radius:3px;transition:width .6s}
+.sbb{display:inline-flex;align-items:center;gap:5px;background:var(--pb);border:1px solid var(--pbr);color:var(--profit);border-radius:5px;padding:3px 8px;font-size:11px;font-weight:600}
+.lhr2{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--deep);border-radius:7px;margin-bottom:5px;border:1px solid var(--border)}
+.tip{background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:11px;color:var(--subtle);display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+/* AUTOCOMPLETE */
+.acw{position:relative}
+.acl{position:absolute;top:100%;left:0;right:0;background:var(--raised);border:1px solid var(--border);border-radius:7px;max-height:220px;overflow-y:auto;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.6);margin-top:2px;display:none}
+.acl.show{display:block}
+.aci{display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;transition:background .1s;font-size:12px;border-bottom:1px solid rgba(45,63,85,.3)}
+.aci:last-child{border-bottom:none}
+.aci:hover,.aci.sel{background:var(--surface)}
+.acn{color:var(--bright);flex:1}
+/* tipo tags */
+.ttag{display:inline-flex;padding:1px 5px;border-radius:3px;font-size:10px;font-weight:600}
+.tm{background:rgba(180,180,200,.1);border:1px solid rgba(180,180,200,.2);color:#B4B4C8}
+.tc2{background:rgba(160,120,80,.1);border:1px solid rgba(160,120,80,.2);color:#A07850}
+.tpa{background:rgba(180,120,200,.1);border:1px solid rgba(180,120,200,.2);color:#B478C8}
+.tma{background:rgba(120,160,80,.1);border:1px solid rgba(120,160,80,.2);color:#78A050}
+.tpe{background:rgba(140,140,140,.1);border:1px solid rgba(140,140,140,.2);color:#909090}
+.tru{background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.2);color:#4CAF50}
+.tal{background:rgba(33,150,243,.1);border:1px solid rgba(33,150,243,.2);color:#2196F3}
+.tre{background:rgba(156,39,176,.1);border:1px solid rgba(156,39,176,.2);color:#9C27B0}
+.tar{background:rgba(255,193,7,.1);border:1px solid rgba(255,193,7,.2);color:#FFC107}
+
+/* RE-GEAR */
+.rg-input{width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:8px;padding:10px 12px;font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;resize:vertical;min-height:140px;line-height:1.6}
+.rg-input:focus{border-color:var(--gold)}
+.rg-row{display:flex;align-items:center;gap:0;border-bottom:1px solid rgba(45,63,85,.4);transition:background .1s}
+.rg-row:hover{background:rgba(31,44,61,.5)}
+.rg-cell{padding:8px 10px;font-size:12px;white-space:nowrap}
+.rg-nome{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rg-val{font-family:'Barlow Condensed',sans-serif;font-variant-numeric:tabular-nums;font-size:13px}
+.rg-win{background:var(--pb);border:1px solid var(--pbr);color:var(--profit);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+.rg-lose{background:var(--lb);border:1px solid var(--lbr);color:var(--loss);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+.rg-equal{background:var(--gb);border:1px solid var(--gbr);color:var(--gold);border-radius:4px;padding:2px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+.rg-notfound{background:rgba(74,98,128,.12);border:1px solid rgba(74,98,128,.25);color:var(--dim);border-radius:4px;padding:2px 8px;font-size:11px}
+.rg-summary{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.rg-sum-item{text-align:center}
+.rg-sum-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.rg-sum-lbl{font-size:10px;color:var(--subtle);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+
+/* SYNC */
+@keyframes spin-sync{to{transform:rotate(360deg)}}
+.syncing{animation:spin-sync .8s linear infinite;display:inline-block}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- SIDEBAR -->
+<aside class="sb" id="sb">
+  <div class="sbl">
+    <div class="sbi">⚔️</div>
+    <div class="sbt"><div class="sbn">Albion Craft</div><div class="sbs">INTELLIGENCE PRO</div></div>
+  </div>
+  <nav class="nav">
+    <div class="ng"><div class="ngl">Principal</div>
+      <div class="ni act" data-p="dashboard"><span class="nic">📊</span><span class="nil">Dashboard</span></div>
+      <div class="ni" data-p="receitas"><span class="nic">📖</span><span class="nil">Receitas</span></div>
+      <div class="ni" data-p="precos"><span class="nic">💰</span><span class="nil">Preços</span></div>
+    </div>
+    <div class="ng"><div class="ngl">Ferramentas</div>
+      <div class="ni" data-p="calculadora"><span class="nic">🧮</span><span class="nil">Calculadora</span></div>
+      <div class="ni" data-p="scanner"><span class="nic">🔍</span><span class="nil">Scanner</span></div>
+      <div class="ni" data-p="encantamentos"><span class="nic">✨</span><span class="nil">Encantamentos</span></div>
+    </div>
+    <div class="ng"><div class="ngl">Inteligência</div>
+      <div class="ni" data-p="mercado"><span class="nic">📈</span><span class="nil">Mercado</span></div>
+      <div class="ni" data-p="alertas"><span class="nic">🔔</span><span class="nil">Alertas</span></div>
+    </div>
+    <div class="ng"><div class="ngl">Aprendizado</div>
+      <div class="ni" data-p="regear" style="color:var(--info)"><span class="nic">📋</span><span class="nil">Lista Re-gear</span></div>
+      <div class="ni lrn" data-p="aprendizado"><span class="nic">🧠</span><span class="nil">Aprender Print</span><span class="nib">IA</span></div>
+      <div class="ni" data-p="materiais"><span class="nic">🗃️</span><span class="nil">Base Materiais</span></div>
+    </div>
+    <div class="ng"><div class="ngl">Sistema</div>
+      <div class="ni" data-p="config"><span class="nic">⚙️</span><span class="nil">Configurações</span></div>
+    </div>
+  </nav>
+  <div class="sbb"><button class="sbbt" onclick="toggleSB()"><span id="sba">◀</span><span class="nil">Recolher</span></button></div>
+</aside>
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="ctag">📍 Caerleon</div>
+    <button class="fbtn" id="fbtn" onclick="toggleFoco()">⚡ Sem Foco</button>
+    <!-- Servidor -->
+    <select id="api-server" onchange="updateCityTag()"
+      style="background:var(--deep);border:1px solid var(--border);color:var(--subtle);border-radius:5px;padding:3px 8px;font-size:11px;font-family:inherit;outline:none;appearance:none;cursor:pointer">
+      <option value="west">🌎 Americas</option>
+      <option value="europe">🌍 Europa</option>
+      <option value="east">🌏 Ásia</option>
+    </select>
+    <!-- Cidade -->
+    <select id="api-city" onchange="updateCityTag()"
+      style="background:var(--deep);border:1px solid var(--border);color:var(--subtle);border-radius:5px;padding:3px 8px;font-size:11px;font-family:inherit;outline:none;appearance:none;cursor:pointer">
+      <option value="Caerleon">Caerleon</option>
+      <option value="Bridgewatch">Bridgewatch</option>
+      <option value="Fort Sterling">Fort Sterling</option>
+      <option value="Lymhurst">Lymhurst</option>
+      <option value="Martlock">Martlock</option>
+      <option value="Thetford">Thetford</option>
+      <option value="Black Market">Black Market</option>
+    </select>
+    <!-- Status sync -->
+    <div id="sync-status" style="font-size:10px;color:var(--dim);white-space:nowrap;display:flex;align-items:center;gap:5px">
+      <div id="sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--dim)"></div>
+      <span id="sync-txt">Não sincronizado</span>
+    </div>
+    <div class="mla" style="display:flex;gap:8px">
+      <button class="btn" id="sync-btn" onclick="syncPrecos()"
+        style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--info);font-weight:600">
+        🔄 Sincronizar
+      </button>
+      <button class="btn bs2" onclick="exportCSV()">⬇ CSV</button>
+      <button class="btn bp" id="scnbtn" onclick="runScan()">▶ Scan</button>
+    </div>
+  </header>
+  <div class="content">
+
+<!-- DASHBOARD -->
+<div class="page act" id="page-dashboard">
+  <div class="ptit">Dashboard</div><div class="psub" id="dsub"></div>
+  <div class="g4" id="kpis"></div>
+  <div class="g2">
+    <div class="card"><div class="ctit">🏆 Top Oportunidades</div><div id="opps"></div></div>
+    <div>
+      <div class="card" style="margin-bottom:12px"><div class="ctit">📊 Lucro por Categoria</div><div id="cchart"></div></div>
+      <div class="card"><div class="ctit">⚠️ Prejuízos</div><div id="losses"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RECEITAS -->
+<div class="page" id="page-receitas">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <div class="ptit">Base de Receitas</div>
+    <button class="btn bv" onclick="goTo('aprendizado')">🧠 Adicionar via Print</button>
+  </div>
+  <div class="psub" id="rmeta"></div>
+  <div class="fbar">
+    <select class="fsel" id="rt" onchange="renderRec()"><option value="">Todos os Tiers</option><option>7</option><option>8</option></select>
+    <select class="fsel" id="rcat" onchange="renderRec()"><option value="">Todas as Categorias</option></select>
+    <input class="finp" id="rbusca" placeholder="Buscar nome..." oninput="renderRec()" style="min-width:160px">
+  </div>
+  <div class="tw"><table><thead><tr><th>Tier</th><th>Item</th><th>Categoria</th><th>Materiais</th><th>Ret%</th><th>Foco</th><th>Taxa</th><th>Origem</th></tr></thead><tbody id="rtbody"></tbody></table></div>
+</div>
+
+<!-- PRECOS -->
+<div class="page" id="page-precos">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <div class="ptit">Preços dos Materiais</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="precos-sync-info" style="font-size:11px;color:var(--dim)"></span>
+      <button class="btn" onclick="syncPrecos()" style="background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:var(--info);font-size:11px;font-weight:600">🔄 Sincronizar Preços</button>
+    </div>
+  </div>
+  <div class="psub">Dados via <strong style="color:var(--info)">Albion Online Data Project</strong> · clique em 🔄 para buscar os valores atuais do mercado</div>
+  <div class="fbar">
+    <select class="fsel" id="ptipo" onchange="renderPrecos()"><option value="">Todos</option><option value="1">Materiais</option><option value="0">Craftáveis</option></select>
+    <select class="fsel" id="ptier" onchange="renderPrecos()"><option value="">Todos os Tiers</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>
+  </div>
+  <div id="precolist"></div>
+</div>
+
+<!-- CALCULADORA -->
+<div class="page" id="page-calculadora">
+  <div class="ptit">Calculadora de Craft</div><div class="psub">Calcule lucro real com todas as taxas</div>
+  <div class="g2">
+    <div class="card">
+      <div class="ctit" style="margin-bottom:14px">⚙️ Configurar</div>
+      <div class="fd"><label>Receita / Item</label><select id="crec" onchange="calcular()"><option value="">Selecione...</option></select></div>
+      <div class="g2" style="gap:8px">
+        <div class="fd"><label>Quantidade</label><input type="number" id="cqtd" value="1" min="1" oninput="calcular()"></div>
+        <div class="fd"><label>Taxa Mercado %</label><input type="number" id="ctax" value="3" min="0" max="10" step="0.1" oninput="calcular()"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--deep);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:10px">
+        <div><div style="font-size:12px;font-weight:600;color:var(--bright)">⚡ Usar Foco</div><div style="font-size:10px;color:var(--dim);margin-top:2px">Retorno 47.9%</div></div>
+        <button class="tsw off" id="cfoco" onclick="toggleCF()"></button>
+      </div>
+      <div class="fd"><label>Taxa Estação %</label><input type="number" id="cest" value="0" min="0" max="100" step="0.1" oninput="calcular()"></div>
+      <button class="btn bp" style="width:100%;justify-content:center;padding:10px" onclick="calcular()">🧮 Calcular Lucro</button>
+    </div>
+    <div id="calcres">
+      <div class="card" style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;opacity:.45;min-height:300px">
+        <div style="font-size:40px">🧮</div><div style="color:var(--subtle)">Selecione uma receita</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div class="page" id="page-scanner">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+    <div><div class="ptit">Scanner de Lucro</div><div class="psub" id="scanmeta" style="margin:0"></div></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn bg2" onclick="exportCSV()">⬇ CSV</button>
+      <button class="btn bp" onclick="runScan()">▶ Executar</button>
+    </div>
+  </div>
+  <div class="fbar">
+    <select class="fsel" id="stier" onchange="renderScan()"><option value="">Tier</option><option>7</option><option>8</option></select>
+    <select class="fsel" id="scat" onchange="renderScan()"><option value="">Categoria</option></select>
+    <select class="fsel" id="sluc" onchange="renderScan()"><option value="">Todos</option><option value="1">Lucrativos</option><option value="0">Prejuízos</option></select>
+    <button class="schp act" id="ss0" onclick="setSort('lucro_l')">↓ Lucro</button>
+    <button class="schp" id="ss1" onclick="setSort('roi')">↓ ROI</button>
+    <button class="schp" id="ss2" onclick="setSort('margem')">↓ Margem</button>
+    <button class="schp" id="ss3" onclick="setSort('lpf')">↓ L/Foco</button>
+  </div>
+  <div class="tw"><table><thead><tr><th>#</th><th>Tier</th><th>Item</th><th>Cat.</th><th>Custo</th><th>Venda</th><th>Lucro Líq.</th><th>Margem</th><th>ROI</th><th>L/Foco</th><th>Decisão</th></tr></thead><tbody id="stbody"></tbody></table></div>
+</div>
+
+<!-- ENCANTAMENTOS -->
+<div class="page" id="page-encantamentos">
+  <div class="ptit">Comparador de Encantamentos</div>
+  <div class="psub">Rota A: craft direto · Rota B: base + encantar</div>
+  <div class="g2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="ctit">🔬 Selecionar Receitas</div>
+
+      <!-- FILTROS -->
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <select class="fsel" id="enc-f-tier" onchange="encFiltrar()" style="flex:1">
+          <option value="">Todos os Tiers</option>
+          <option value="4">T4</option><option value="5">T5</option>
+          <option value="6">T6</option><option value="7">T7</option><option value="8">T8</option>
+        </select>
+        <select class="fsel" id="enc-f-cat" onchange="encFiltrar()" style="flex:1">
+          <option value="">Todas as Categorias</option>
+          <option value="Armas">Armas</option>
+          <option value="Armaduras">Armaduras</option>
+          <option value="Capacetes">Capacetes</option>
+          <option value="Botas">Botas</option>
+          <option value="Bolsas">Bolsas</option>
+          <option value="Capas">Capas</option>
+        </select>
+      </div>
+
+      <!-- ITEM BASE com busca -->
+      <div class="fd">
+        <label>Item Base (.0)</label>
+        <div class="acw">
+          <input type="text" id="enc-busca-base" placeholder="Digite para buscar..." autocomplete="off"
+            oninput="encSearch('base',this.value)"
+            onkeydown="encKey(event,'base')"
+            onblur="setTimeout(()=>encHide('base'),180)"
+            style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none"/>
+          <div class="acl" id="enc-ac-base"></div>
+        </div>
+        <div id="enc-sel-base" style="display:none;margin-top:6px;background:var(--deep);border:1px solid var(--gbr);border-radius:6px;padding:7px 10px;align-items:center;gap:8px">
+          <span id="enc-sel-base-img"></span>
+          <span id="enc-sel-base-nome" style="font-size:12px;color:var(--bright);flex:1"></span>
+          <button onclick="encClear('base')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px">✕</button>
+        </div>
+      </div>
+
+      <!-- ITEM ENCANTADO com busca -->
+      <div class="fd">
+        <label>Item Encantado (.1 / .2 / .3)</label>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <select class="fsel" id="enc-f-enc" onchange="encFiltrar()" style="flex:1;font-size:11px">
+            <option value="">Qualquer encantamento</option>
+            <option value="1">.1 (Runa)</option>
+            <option value="2">.2 (Alma)</option>
+            <option value="3">.3 (Relíquia)</option>
+          </select>
+        </div>
+        <div class="acw">
+          <input type="text" id="enc-busca-enc" placeholder="Digite para buscar..." autocomplete="off"
+            oninput="encSearch('enc',this.value)"
+            onkeydown="encKey(event,'enc')"
+            onblur="setTimeout(()=>encHide('enc'),180)"
+            style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none"/>
+          <div class="acl" id="enc-ac-enc"></div>
+        </div>
+        <div id="enc-sel-enc" style="display:none;margin-top:6px;background:var(--deep);border:1px solid var(--gbr);border-radius:6px;padding:7px 10px;align-items:center;gap:8px">
+          <span id="enc-sel-enc-img"></span>
+          <span id="enc-sel-enc-nome" style="font-size:12px;color:var(--bright);flex:1"></span>
+          <button onclick="encClear('enc')" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px">✕</button>
+        </div>
+      </div>
+
+      <!-- TIPO ENCANTAMENTO -->
+      <div class="fd">
+        <label>Material de Encantamento</label>
+        <select id="enc-tipo" onchange="calcEnc()" style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;appearance:none">
+          <option value="runa">🟢 Runa → .1</option>
+          <option value="alma">🔵 Alma → .2</option>
+          <option value="reliquia">🟣 Relíquia → .3</option>
+        </select>
+      </div>
+
+      <!-- INFO QUANTIDADES -->
+      <div id="enc-qtd-info" style="background:var(--deep);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:12px;color:var(--subtle);margin-bottom:12px">
+        Selecione os itens acima para calcular.
+      </div>
+
+      <button class="btn bp" style="width:100%;justify-content:center;padding:10px;font-size:13px;font-weight:700" onclick="calcEnc()">✨ Comparar Rotas</button>
+    </div>
+    <div id="encres">
+      <div class="card" style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;opacity:.45;min-height:280px">
+        <div style="font-size:36px">✨</div>
+        <div style="color:var(--subtle);font-size:13px">Busque e selecione os dois itens</div>
+        <div style="font-size:11px;color:var(--dim)">Item base (.0) + Item encantado (.1/.2/.3)</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctit">📋 Quantidade de Encantamentos por Tipo de Item</div>
+    <div class="tw" style="margin-top:8px">
+      <table>
+        <thead><tr>
+          <th>Tipo de Item</th>
+          <th style="color:#4CAF50">🟢 Runas (.1)</th>
+          <th style="color:#2196F3">🔵 Almas (.2)</th>
+          <th style="color:#9C27B0">🟣 Relíquias (.3)</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><div style="font-size:12px;color:var(--bright);font-weight:500">⛑️ Elmo / 👢 Bota</div><div style="font-size:10px;color:var(--dim)">Capacetes e Botas</div></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#4CAF50">92</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#2196F3">92</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#9C27B0">92</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-size:12px;color:var(--bright);font-weight:500">🛡️ Peito</div><div style="font-size:10px;color:var(--dim)">Armaduras</div></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#4CAF50">192</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#2196F3">192</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#9C27B0">192</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-size:12px;color:var(--bright);font-weight:500">⚔️ Arma de 1 Mão</div><div style="font-size:10px;color:var(--dim)">1H</div></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#4CAF50">288</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#2196F3">288</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#9C27B0">288</span></td>
+          </tr>
+          <tr>
+            <td><div style="font-size:12px;color:var(--bright);font-weight:500">🗡️ Arma de 2 Mãos</div><div style="font-size:10px;color:var(--dim)">2H</div></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#4CAF50">382</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#2196F3">382</span></td>
+            <td><span style="font-family:'Barlow Condensed';font-size:18px;font-weight:700;color:#9C27B0">382</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MERCADO -->
+<div class="page" id="page-mercado">
+  <div class="ptit">Inteligência de Mercado</div><div class="psub">Análise e insights automáticos</div>
+  <div id="insights" style="margin-bottom:16px"></div>
+  <div class="g2">
+    <div class="card"><div class="ctit">📊 ROI por Categoria</div><div id="roichart"></div></div>
+    <div class="card"><div class="ctit">🏆 Ranking por Lucro</div><div id="ranklist"></div></div>
+  </div>
+</div>
+
+<!-- ALERTAS -->
+<div class="page" id="page-alertas">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div><div class="ptit">Alertas</div><div class="psub" id="almeta" style="margin:0"></div></div>
+    <button class="btn bp" onclick="addAl()">+ Novo Alerta</button>
+  </div>
+  <div id="allist"></div>
+  <div id="alform" style="display:none" class="card" style="margin-top:14px">
+    <div class="ctit">Novo Alerta</div>
+    <div class="g2" style="gap:10px">
+      <div class="fd"><label>Nome</label><input id="aln" placeholder="Ex: T8 lucrativo..."></div>
+      <div class="fd"><label>Tipo</label><select id="alt"><option value="item_lucrativo">Item ficou lucrativo</option><option value="roi_acima">ROI acima de X%</option><option value="preco_abaixo">Preço caiu abaixo de X</option><option value="margem_abaixo">Margem abaixo de X%</option></select></div>
+      <div class="fd"><label>Valor Limite</label><input id="alv" type="number" placeholder="0"></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;padding-bottom:10px">
+        <button class="btn bp" onclick="saveAl()">Salvar</button>
+        <button class="btn bg2" onclick="cancelAl()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APRENDIZADO -->
+<div class="page" id="page-aprendizado">
+  <div class="lhdr">
+    <span style="font-size:32px;flex-shrink:0">🧠</span>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white)">Aprender via Print</div>
+      <div style="font-size:12px;color:var(--subtle);margin-top:3px">Arraste uma screenshot da janela de crafting. O sistema conhece 160+ materiais: barras, couros, panos, madeiras, pedras, runas, almas, relíquias e artefatos T2–T8.</div>
+    </div>
+  </div>
+  <div class="g2" style="align-items:start">
+    <div>
+      <div class="dz" id="dz" ondragover="doDO(event)" ondragleave="doDL(event)" ondrop="doDD(event)">
+        <input type="file" id="fi" accept="image/*" onchange="doFI(event)">
+        <span style="font-size:40px;display:block;margin-bottom:12px">📷</span>
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:600;color:var(--white);margin-bottom:6px">Arraste o print aqui</div>
+        <div style="font-size:12px;color:var(--subtle)">ou clique para selecionar</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:8px">PNG · JPG · JPEG · WEBP</div>
+      </div>
+      <div id="iprev" style="display:none;margin-top:12px">
+        <img id="pimg" class="pimg" src="" alt="Preview"/>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn bv" style="flex:1;justify-content:center" id="bproc" onclick="procImg()">🔍 Processar com IA</button>
+          <button class="btn bg2" onclick="clearImg()">✕ Limpar</button>
+        </div>
+      </div>
+      <div id="tipsarea" style="margin-top:14px">
+        <div class="tip"><span>💡</span><span>Abra a janela de crafting no jogo e tire um print mostrando o nome do item e os materiais. Configure uma API Key em ⚙️ para usar IA Vision real.</span></div>
+        <div class="tip"><span>🧱</span><span>O sistema conhece todos os materiais do jogo: barras T2–T8, couros, panos, madeiras, pedras, runas, almas, relíquias e artefatos por categoria.</span></div>
+        <div class="tip"><span>✏️</span><span>Após a leitura, use o autocomplete nos campos de material — comece a digitar e as sugestões aparecem automaticamente.</span></div>
+      </div>
+      <div id="learnhist" style="display:none;margin-top:16px">
+        <div class="ctit" style="margin-bottom:8px">📚 Aprendidas nesta Sessão</div>
+        <div id="histlist"></div>
+      </div>
+    </div>
+    <div id="lright">
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:48px 24px;text-align:center;opacity:.5;min-height:300px" id="lidle">
+        <div style="font-size:48px">🔍</div>
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--white)">Aguardando imagem</div>
+        <div style="font-size:12px;color:var(--subtle)">Faça upload de um print para começar</div>
+      </div>
+      <div id="lproc" style="display:none">
+        <div class="ocrs prc"><div class="spin"></div><div><div style="font-weight:600;margin-bottom:2px">Analisando com IA...</div><div style="font-size:11px;opacity:.8" id="pstep">Carregando</div></div></div>
+      </div>
+      <div id="lrev" style="display:none">
+        <div class="ocrs" id="ocrst">
+          <span id="ocric">✅</span>
+          <div style="flex:1"><div style="font-weight:600;margin-bottom:2px" id="ocrtit">Revise os dados</div><div style="font-size:11px;opacity:.8">Confirme antes de salvar</div></div>
+          <div style="text-align:right">
+            <div style="font-size:10px;opacity:.7">Confiança</div>
+            <div style="font-size:16px;font-family:'Barlow Condensed';font-weight:700" id="confv">--</div>
+            <div class="cfb" style="width:60px"><div class="cff" id="confbar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="rvt">📦 Dados do Item</div>
+          <div class="g2" style="gap:8px;margin-bottom:8px">
+            <div class="fd" style="margin:0"><label>Nome do Item *</label><input type="text" id="rvnome" placeholder="Ex: Armadura Real"></div>
+            <div class="fd" style="margin:0"><label>Categoria</label>
+              <select id="rvcat"><option value="">Selecione...</option><option>Armas</option><option>Armaduras</option><option>Capacetes</option><option>Botas</option><option>Capas</option><option>Bolsas</option><option>Ferramentas</option><option>Consumíveis</option></select>
+            </div>
+            <div class="fd" style="margin:0"><label>Tier</label>
+              <select id="rvtier"><option value="1">T1</option><option value="2">T2</option><option value="3">T3</option><option value="4">T4</option><option value="5">T5</option><option value="6">T6</option><option value="7">T7</option><option value="8" selected>T8</option></select>
+            </div>
+            <div class="fd" style="margin:0"><label>Encantamento</label>
+              <select id="rvenc"><option value="0" selected>Base (.0)</option><option value="1">.1 (Runa)</option><option value="2">.2 (Alma)</option><option value="3">.3 (Relíquia)</option></select>
+            </div>
+            <div class="fd" style="margin:0"><label>Retorno Sem Foco %</label><input type="number" id="rvret" value="15.2" min="0" max="100" step="0.1"></div>
+            <div class="fd" style="margin:0"><label>Custo de Foco</label><input type="number" id="rvfoco" value="0" min="0"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div class="rvt" style="margin:0;border:none;padding:0">🧱 Materiais</div>
+            <button class="btn bg2" style="font-size:11px;padding:3px 8px" onclick="addMat()">+ Adicionar</button>
+          </div>
+          <div id="matslist"></div>
+          <button class="amb" onclick="addMat()">+ Adicionar material</button>
+        </div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="rvt">📝 Notas</div>
+          <textarea id="rvnotas" placeholder="Observações sobre esta receita..." style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:8px 10px;font-size:12px;font-family:inherit;outline:none;resize:vertical;min-height:50px;margin:0"></textarea>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn bok" style="flex:1;justify-content:center;padding:11px;font-size:13px;font-weight:700" onclick="saveRec()">✅ Confirmar e Salvar</button>
+          <button class="btn bdd" onclick="descarte()" style="padding:11px 14px">🗑 Descartar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MATERIAIS -->
+<div class="page" id="page-materiais">
+  <div class="ptit">Base de Materiais do Albion</div>
+  <div class="psub" id="matcount">160 materiais conhecidos pelo sistema</div>
+  <div class="fbar">
+    <select class="fsel" id="mttipo" onchange="renderMats()">
+      <option value="">Todos os Tipos</option>
+      <option value="metal">⚙️ Metais / Barras</option>
+      <option value="couro">🟤 Couros</option>
+      <option value="pano">🟣 Tecidos / Panos</option>
+      <option value="madeira">🟢 Madeiras / Tábuas</option>
+      <option value="pedra">⚪ Pedras / Blocos</option>
+      <option value="runa">🟢 Runas</option>
+      <option value="alma">🔵 Almas</option>
+      <option value="reliquia">🟣 Relíquias</option>
+      <option value="artefato">🌟 Artefatos</option>
+    </select>
+    <select class="fsel" id="mttier" onchange="renderMats()">
+      <option value="">Todos os Tiers</option>
+      <option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>
+    </select>
+    <input class="finp" id="mtbusca" placeholder="Buscar nome ou ID..." oninput="renderMats()" style="min-width:160px">
+    <span id="mtcnt" style="font-size:11px;color:var(--dim)"></span>
+  </div>
+  <div id="matgrid"></div>
+</div>
+
+<!-- RE-GEAR -->
+<div class="page" id="page-regear">
+  <div class="ptit">📋 Lista de Re-gear</div>
+  <div class="psub">Cole os nomes dos itens — o sistema calcula automaticamente se vale craftar direto ou enchantar o base</div>
+
+  <div class="g2" style="align-items:start;margin-bottom:16px">
+    <div class="card">
+      <div class="ctit">📝 Lista de Itens</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:8px">Cole um item por linha. Exemplo:<br><span style="font-family:'JetBrains Mono';color:var(--subtle)">Robe do Mago T6.1<br>Sandália do Erudito T6.2<br>Capuz do Mago T6.3</span></div>
+      <textarea class="rg-input" id="rg-input" placeholder="Cole aqui a lista de itens, um por linha...&#10;Ex: Robe do Mago T6.1&#10;Sandália do Erudito T6.2&#10;Capuz do Mago T6.3"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <div class="fd" style="margin:0;flex:1;min-width:100px">
+          <label style="font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--subtle);display:block;margin-bottom:4px">Taxa Mercado %</label>
+          <input type="number" id="rg-taxa" value="3" min="0" max="10" step="0.1"
+            style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:6px 10px;font-size:12px;font-family:inherit;outline:none">
+        </div>
+        <div class="fd" style="margin:0;flex:1;min-width:100px">
+          <label style="font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--subtle);display:block;margin-bottom:4px">Retorno Craft %</label>
+          <input type="number" id="rg-ret" value="15.2" min="0" max="100" step="0.1"
+            style="width:100%;background:var(--deep);border:1px solid var(--border);color:var(--bright);border-radius:6px;padding:6px 10px;font-size:12px;font-family:inherit;outline:none">
+        </div>
+        <div style="display:flex;align-items:flex-end">
+          <button class="btn bp" style="padding:7px 20px;font-size:13px" onclick="rgCalcular()">⚡ Calcular</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--deep);border:1px solid var(--border);border-radius:7px;font-size:11px;color:var(--subtle)">
+        💡 <strong style="color:var(--bright)">Rota A</strong> = craft direto do item encantado (sem foco) &nbsp;|&nbsp;
+        <strong style="color:var(--bright)">Rota B</strong> = craft base + comprar runa/alma/relíquia para encantar
+      </div>
+    </div>
+    <div class="card">
+      <div class="ctit">⚙️ Preços dos Encantamentos</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:10px">Ajuste conforme o mercado atual de Caerleon</div>
+      <div id="rg-enc-precos"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--deep);border:1px solid var(--border);border-radius:7px;font-size:11px;color:var(--subtle)">
+        🔢 <strong style="color:var(--bright)">Quantidades usadas:</strong><br>
+        Elmo/Bota → 92 · Armadura → 192 · Arma 1H → 288 · Arma 2H → 382
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMO -->
+  <div id="rg-summary" style="display:none" class="rg-summary">
+    <div class="rg-sum-item"><div class="rg-sum-val" id="rgs-total">0</div><div class="rg-sum-lbl">Itens analisados</div></div>
+    <div class="rg-sum-item"><div class="rg-sum-val" style="color:var(--profit)" id="rgs-craft">0</div><div class="rg-sum-lbl">Melhor craftar direto</div></div>
+    <div class="rg-sum-item"><div class="rg-sum-val" style="color:var(--gold)" id="rgs-enc">0</div><div class="rg-sum-lbl">Melhor encantar base</div></div>
+    <div class="rg-sum-item"><div class="rg-sum-val" style="color:var(--info)" id="rgs-eco">0</div><div class="rg-sum-lbl">Economia total</div></div>
+  </div>
+
+  <!-- TABELA RESULTADO -->
+  <div id="rg-result" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="ctit" style="margin:0">Resultado por Item</div>
+      <button class="btn bs2" style="font-size:11px" onclick="rgExportar()">⬇ Exportar CSV</button>
+    </div>
+    <div style="overflow-x:auto;border-radius:9px;border:1px solid var(--border)">
+      <div style="min-width:900px">
+        <div style="display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--subtle)">
+          <div style="width:34px"></div>
+          <div style="flex:1">Item</div>
+          <div style="width:70px;text-align:right">Tier</div>
+          <div style="width:110px;text-align:right">Custo Rota A<br><span style="font-size:9px;color:var(--dim)">craft direto</span></div>
+          <div style="width:110px;text-align:right">Custo Rota B<br><span style="font-size:9px;color:var(--dim)">base + enc</span></div>
+          <div style="width:90px;text-align:right">Economia</div>
+          <div style="width:90px;text-align:right">Enc. necessário</div>
+          <div style="width:110px;text-align:center;padding-left:10px">Recomendação</div>
+        </div>
+        <div id="rg-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="rg-empty" style="text-align:center;padding:48px;color:var(--dim);font-size:13px">
+    Cole a lista de itens e clique em <strong style="color:var(--bright)">⚡ Calcular</strong>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<div class="page" id="page-config">
+  <div class="ptit">Configurações</div><div class="psub">Parâmetros do sistema · API Keys para OCR com IA</div>
+  <div class="g2">
+    <div class="card"><div class="ctit">⚙️ Craft & Mercado</div><div id="cfglist"></div></div>
+    <div>
+      <div class="card" style="margin-bottom:12px"><div class="ctit">📦 Status do Banco</div><div id="dbstats"></div></div>
+      <div class="card">
+        <div class="ctit">🔑 API Keys para OCR com IA</div>
+        <div style="background:var(--gb);border:1px solid var(--gbr);border-radius:7px;padding:10px 12px;margin-bottom:12px;font-size:11px;color:var(--gold)">💡 Configure uma chave para usar IA Vision na leitura de prints — muito mais preciso.</div>
+        <div class="fd"><label>Anthropic API Key (Claude Vision)</label><input type="password" id="cfgant" placeholder="sk-ant-..."></div>
+        <div class="fd"><label>OpenAI API Key (GPT-4o Vision)</label><input type="password" id="cfgoai" placeholder="sk-..."></div>
+        <button class="btn bp" style="width:100%;justify-content:center" onclick="saveKeys()">Salvar Chaves</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+<script>
+
+// ═══════════════════════════════════════════════════════════════
+// SINCRONIZAÇÃO COM ALBION ONLINE DATA PROJECT API
+// ═══════════════════════════════════════════════════════════════
+
+// Todos os IDs de itens que queremos buscar na API
+const API_IDS = [
+  // Materiais T2-T8
+  "T2_METALBAR","T3_METALBAR","T4_METALBAR","T5_METALBAR","T6_METALBAR","T7_METALBAR","T8_METALBAR",
+  "T2_LEATHER","T3_LEATHER","T4_LEATHER","T5_LEATHER","T6_LEATHER","T7_LEATHER","T8_LEATHER",
+  "T2_CLOTH","T3_CLOTH","T4_CLOTH","T5_CLOTH","T6_CLOTH","T7_CLOTH","T8_CLOTH",
+  "T2_PLANKS","T3_PLANKS","T4_PLANKS","T5_PLANKS","T6_PLANKS","T7_PLANKS","T8_PLANKS",
+  "T2_STONEBLOCK","T3_STONEBLOCK","T4_STONEBLOCK","T5_STONEBLOCK","T6_STONEBLOCK","T7_STONEBLOCK","T8_STONEBLOCK",
+  // Encantamentos
+  "T4_RUNE","T5_RUNE","T6_RUNE","T7_RUNE","T8_RUNE",
+  "T4_SOUL","T5_SOUL","T6_SOUL","T7_SOUL","T8_SOUL",
+  "T4_RELIC","T5_RELIC","T6_RELIC","T7_RELIC","T8_RELIC",
+  // Itens craftáveis T6-T8
+  "T6_ARMOR_PLATE_HELL","T7_ARMOR_PLATE_HELL","T8_ARMOR_PLATE_HELL",
+  "T6_ARMOR_PLATE_HELL@1","T7_ARMOR_PLATE_HELL@1","T8_ARMOR_PLATE_HELL@1",
+  "T6_ARMOR_PLATE_HELL@2","T7_ARMOR_PLATE_HELL@2","T8_ARMOR_PLATE_HELL@2",
+  "T6_ARMOR_PLATE_HELL@3","T7_ARMOR_PLATE_HELL@3","T8_ARMOR_PLATE_HELL@3",
+  "T6_HEAD_PLATE_HELL","T7_HEAD_PLATE_HELL","T8_HEAD_PLATE_HELL",
+  "T6_SHOES_PLATE_HELL","T7_SHOES_PLATE_HELL","T8_SHOES_PLATE_HELL",
+  "T6_MAIN_SWORD","T7_MAIN_SWORD","T8_MAIN_SWORD",
+  "T6_MAIN_SWORD@1","T7_MAIN_SWORD@1","T8_MAIN_SWORD@1",
+  "T6_MAIN_SWORD@2","T7_MAIN_SWORD@2","T8_MAIN_SWORD@2",
+  "T6_MAIN_SWORD@3","T7_MAIN_SWORD@3","T8_MAIN_SWORD@3",
+  "T6_2H_CLAYMORE","T7_2H_CLAYMORE","T8_2H_CLAYMORE",
+  "T6_ARMOR_CLOTH_HELL","T7_ARMOR_CLOTH_HELL","T8_ARMOR_CLOTH_HELL",
+  "T6_ARMOR_CLOTH_HELL@1","T7_ARMOR_CLOTH_HELL@1","T8_ARMOR_CLOTH_HELL@1",
+  "T6_ARMOR_CLOTH_HELL@2","T7_ARMOR_CLOTH_HELL@2","T8_ARMOR_CLOTH_HELL@2",
+  "T6_ARMOR_CLOTH_HELL@3","T7_ARMOR_CLOTH_HELL@3","T8_ARMOR_CLOTH_HELL@3",
+  "T6_HEAD_CLOTH_HELL","T7_HEAD_CLOTH_HELL","T8_HEAD_CLOTH_HELL",
+  "T6_SHOES_CLOTH_HELL","T7_SHOES_CLOTH_HELL","T8_SHOES_CLOTH_HELL",
+  "T6_ARMOR_LEATHER_HELL","T7_ARMOR_LEATHER_HELL","T8_ARMOR_LEATHER_HELL",
+  "T6_HEAD_LEATHER_HELL","T7_HEAD_LEATHER_HELL","T8_HEAD_LEATHER_HELL",
+  "T6_SHOES_LEATHER_HELL","T7_SHOES_LEATHER_HELL","T8_SHOES_LEATHER_HELL",
+  "T6_BAG","T7_BAG","T8_BAG",
+  "T6_CAPE","T7_CAPE","T8_CAPE",
+  "T6_2H_FIRESTAFF","T7_2H_FIRESTAFF","T8_2H_FIRESTAFF",
+  "T6_MAIN_FIRESTAFF","T7_MAIN_FIRESTAFF","T8_MAIN_FIRESTAFF",
+  "T6_2H_HOLYSTAFF","T7_2H_HOLYSTAFF","T8_2H_HOLYSTAFF",
+  "T6_2H_ARCANESTAFF","T7_2H_ARCANESTAFF","T8_2H_ARCANESTAFF",
+  "T6_2H_CURSEDSTAFF","T7_2H_CURSEDSTAFF","T8_2H_CURSEDSTAFF",
+  "T6_2H_NATURESTAFF","T7_2H_NATURESTAFF","T8_2H_NATURESTAFF",
+  "T6_2H_BOW","T7_2H_BOW","T8_2H_BOW",
+  "T6_2H_CROSSBOW","T7_2H_CROSSBOW","T8_2H_CROSSBOW",
+];
+
+// Cache de preços sincronizados da API
+let API_PRICES = {}; // { "T8_METALBAR": {pm,px,med,pc,at,city,qualidade} }
+let lastSyncTime = null;
+let isSyncing = false;
+
+function updateCityTag(){
+  const city = document.getElementById('api-city')?.value||'Caerleon';
+  const srv  = document.getElementById('api-server')?.value||'west';
+  const el   = document.querySelector('.ctag');
+  if(el) el.textContent = '📍 '+city;
+}
+
+function apiBase(){
+  const srv = document.getElementById('api-server')?.value||'west';
+  return `https://${srv}.albion-online-data.com/api/v2/stats/prices`;
+}
+
+function syncStatus(txt, cor, spin){
+  const dot = document.getElementById('sync-dot');
+  const stxt = document.getElementById('sync-txt');
+  const btn  = document.getElementById('sync-btn');
+  if(dot)  dot.style.background = cor;
+  if(stxt) stxt.textContent = txt;
+  if(btn)  btn.innerHTML = spin
+    ? '<span class="syncing">🔄</span> Sincronizando...'
+    : '🔄 Sincronizar';
+  if(btn)  btn.disabled = spin;
+  // Atualizar info na aba de preços
+  const pi = document.getElementById('precos-sync-info');
+  if(pi && lastSyncTime) pi.textContent = 'Última sync: '+lastSyncTime.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+async function syncPrecos(){
+  if(isSyncing) return;
+  isSyncing = true;
+  syncStatus('Buscando preços...', '#FFB020', true);
+
+  const city    = document.getElementById('api-city')?.value||'Caerleon';
+  const base    = apiBase();
+  const BATCH   = 50; // API suporta até ~100 IDs por request
+  const results = [];
+
+  try{
+    for(let i=0; i<API_IDS.length; i+=BATCH){
+      const batch = API_IDS.slice(i, i+BATCH).join(',');
+      syncStatus(`Buscando ${i+1}–${Math.min(i+BATCH,API_IDS.length)} de ${API_IDS.length}...`, '#FFB020', true);
+      const url = `${base}/${batch}?locations=${encodeURIComponent(city)}&qualities=1`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      results.push(...data);
+      // Pequena pausa entre batches para não sobrecarregar a API
+      if(i+BATCH < API_IDS.length) await new Promise(r=>setTimeout(r,300));
+    }
+
+    // Processar resultados e atualizar API_PRICES
+    let atualizados = 0;
+    results.forEach(item => {
+      if(!item.item_id) return;
+      // item_id pode vir como T8_METALBAR ou T8_MAIN_SWORD@1
+      const id = item.item_id;
+      const enc = item.enchantment_level||0;
+      const key = enc>0 ? `${id}@${enc}` : id;
+      // Só guardar se tiver preço válido
+      if(item.sell_price_min > 0 || item.buy_price_max > 0){
+        API_PRICES[id] = {
+          pm:  item.sell_price_min  || 0,
+          px:  item.sell_price_max  || 0,
+          med: Math.round((item.sell_price_min + item.sell_price_max)/2) || 0,
+          pc:  item.buy_price_max   || 0,
+          at:  item.sell_price_min_date ? new Date(item.sell_price_min_date).getTime() : Date.now(),
+          city: item.city||city,
+        };
+        atualizados++;
+      }
+    });
+
+    // Atualizar PM com preços reais da API
+    Object.keys(PM).forEach(key => {
+      const p = PM[key];
+      if(!p.id) return;
+      const ap = API_PRICES[p.id];
+      if(ap && ap.pm > 0){
+        PM[key] = {...p, pm:ap.pm, px:ap.px, med:ap.med, pc:ap.pc, at:ap.at};
+        // Também atualizar por ID direto para compatibilidade
+        Object.keys(PM).forEach(k2 => {
+          if(PM[k2].id === p.id && k2 !== key) PM[k2] = {...PM[k2], pm:ap.pm, px:ap.px, med:ap.med, pc:ap.pc, at:ap.at};
+        });
+      }
+    });
+
+    lastSyncTime = new Date();
+    const horaStr = lastSyncTime.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    syncStatus(`✓ ${atualizados} preços · ${horaStr}`, 'var(--profit)', false);
+
+    // Atualizar todas as abas que mostram preços
+    if(document.getElementById('page-precos')?.classList.contains('act')) renderPrecos();
+    renderDash();
+
+    // Toast de sucesso
+    showToast(`✅ ${atualizados} preços atualizados de ${city}`, 'var(--profit)');
+
+  }catch(err){
+    console.error('Sync error:', err);
+    syncStatus('Erro na sincronização', 'var(--loss)', false);
+    showToast(`❌ Erro: ${err.message}`, 'var(--loss)');
+  }finally{
+    isSyncing = false;
+  }
+}
+
+// Toast de notificação
+function showToast(msg, cor){
+  const existing = document.getElementById('toast-msg');
+  if(existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'toast-msg';
+  t.style.cssText = `position:fixed;bottom:20px;right:20px;background:var(--surface);border:1px solid ${cor};color:var(--bright);padding:12px 18px;border-radius:8px;font-size:12px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:300px;animation:fi .3s ease`;
+  t.innerHTML = `<div style="font-size:13px;font-weight:600;margin-bottom:2px">${msg}</div>`;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .5s'; setTimeout(()=>t.remove(),500); }, 4000);
+}
+
+// Sincronização automática ao iniciar (após 2s para não bloquear o carregamento)
+setTimeout(()=>{
+  syncStatus('Clique para sincronizar preços', 'var(--dim)', false);
+}, 500);
+
+
+
+const IMG="https://render.albiononline.com/v1/item";
+function iurl(id){return id?(IMG+"/"+id+".png?count=1&quality=1"):"";}
+function iimg(id,sz){
+  var r=sz>32?7:4;
+  if(!id)return'<div style="width:'+sz+'px;height:'+sz+'px;border-radius:'+r+'px;background:var(--deep);border:1px solid var(--border);flex-shrink:0"></div>';
+  return'<img src="'+iurl(id)+'" style="width:'+sz+'px;height:'+sz+'px;border-radius:'+r+'px;object-fit:cover;background:var(--deep);border:1px solid var(--border);flex-shrink:0" loading="lazy" onerror="this.style.opacity=0.15" alt=""/>';
+}
+
+const ITEM_IMG={
+  "Lingote de Aço Arcano":"T8_METALBAR","Couro Excepcional":"T8_LEATHER",
+  "Pano Arcano":"T8_CLOTH","Tábua Arcana":"T8_PLANKS","Bloco de Basalto":"T8_STONEBLOCK",
+  "Runa (Ancião)":"T8_RUNE","Alma (Ancião)":"T8_SOUL","Relíquia (Ancião)":"T8_RELIC",
+  "Lingote de Aço Feérico":"T7_METALBAR","Couro Selvagem":"T7_LEATHER",
+  "Pano Selvagem":"T7_CLOTH","Tábua de Ashenbark":"T7_PLANKS","Bloco de Sílex":"T7_STONEBLOCK",
+  "Runa (Grão-mestre)":"T7_RUNE","Alma (Grão-mestre)":"T7_SOUL","Relíquia (Grão-mestre)":"T7_RELIC",
+  "Lingote de Aço Sombrio":"T6_METALBAR","Couro da Sombra":"T6_LEATHER",
+  "Pano da Sombra":"T6_CLOTH","Tábua de Briar":"T6_PLANKS","Bloco de Granito":"T6_STONEBLOCK",
+  "Runa (Mestre)":"T6_RUNE","Alma (Mestre)":"T6_SOUL","Relíquia (Mestre)":"T6_RELIC",
+  "Lingote de Aço Luminoso":"T5_METALBAR","Couro Resistente":"T5_LEATHER",
+  "Pano Mágico":"T5_CLOTH","Tábua de Cedro":"T5_PLANKS","Bloco de Mármore":"T5_STONEBLOCK",
+  "Runa (Especialista)":"T5_RUNE","Alma (Especialista)":"T5_SOUL","Relíquia (Especialista)":"T5_RELIC",
+  "Lingote de Aço":"T4_METALBAR","Couro Rígido":"T4_LEATHER",
+  "Pano Ornamentado":"T4_CLOTH","Tábua de Pinho":"T4_PLANKS","Bloco de Travertino":"T4_STONEBLOCK",
+  "Runa (Adepto)":"T4_RUNE","Alma (Adepto)":"T4_SOUL","Relíquia (Adepto)":"T4_RELIC",
+  "Lingote de Ferro":"T3_METALBAR","Couro Trabalhado":"T3_LEATHER",
+  "Pano Fino":"T3_CLOTH","Tábua de Carvalho":"T3_PLANKS","Bloco de Arenito":"T3_STONEBLOCK",
+  "Lingote de Bronze":"T2_METALBAR","Couro":"T2_LEATHER",
+  "Pano Simples":"T2_CLOTH","Tábua de Pinheiro":"T2_PLANKS","Bloco de Calcário":"T2_STONEBLOCK",
+  "Artefato: Espada Larga":"T8_ARTEFACT_MAIN_BROADSWORD",
+  "Artefato: Machado":"T8_ARTEFACT_MAIN_AXE","Artefato: Maça":"T8_ARTEFACT_MAIN_MACE",
+  "Artefato: Martelo":"T8_ARTEFACT_2H_HAMMER","Artefato: Adaga":"T8_ARTEFACT_MAIN_DAGGER",
+  "Artefato: Lança":"T8_ARTEFACT_MAIN_SPEAR","Artefato: Arco":"T8_ARTEFACT_2H_BOW",
+  "Artefato: Cajado de Fogo":"T8_ARTEFACT_MAIN_FIRESTAFF",
+  "Artefato: Cajado Sagrado":"T8_ARTEFACT_MAIN_HOLYSTAFF",
+  "Artefato: Cajado Arcano":"T8_ARTEFACT_MAIN_ARCANESTAFF",
+  "Artefato: Cajado Amaldiçoado":"T8_ARTEFACT_MAIN_CURSESTAFF",
+  "Artefato: Cajado da Natureza":"T8_ARTEFACT_MAIN_NATURESTAFF",
+  "Artefato: Armadura de Placa":"T8_ARTEFACT_ARMOR_PLATE_HELL",
+  "Artefato: Armadura de Couro":"T8_ARTEFACT_ARMOR_LEATHER_HELL",
+  "Artefato: Armadura de Tecido":"T8_ARTEFACT_ARMOR_CLOTH_HELL",
+  "Artefato: Capacete de Placa":"T8_ARTEFACT_HEAD_PLATE_HELL",
+  "Artefato: Bota de Placa":"T8_ARTEFACT_SHOES_PLATE_HELL",
+};
+
+// Itens craftáveis base (sem tier) → sufixo ID
+const CRAFT_SUFFIX={
+  "Espada Larga":"MAIN_SWORD","Espada da Claymore":"2H_CLAYMORE",
+  "Espada da Ruína":"2H_CLEAVERS_MORGANA","Espada Dupla":"2H_DUALSWORD",
+  "Espada Escavadora":"MAIN_SCIMITAR_MORGANA",
+  "Machado de Guerra":"MAIN_AXE","Machado Duplo":"2H_HALBERD",
+  "Machado Sombrio":"2H_HALBERD_MORGANA","Gadanha":"2H_SCYTHE_UNDEAD",
+  "Machado do Carniceiro":"MAIN_CLEAVER",
+  "Maça":"MAIN_MACE","Flail":"2H_FLAIL","Maça Bestial":"MAIN_MACE_MORGANA",
+  "Martelo da Infâmia":"2H_POLEHAMMER","Martelo de Guerra":"2H_HAMMER",
+  "Martelo de Óleos":"2H_HAMMER_MORGANA","Martelo Sagrado":"2H_DIVINEHAMMER",
+  "Punhal":"MAIN_DAGGER","Punhal Duplo":"2H_DAGGERPAIR",
+  "Adagas da Morte":"2H_DUALSICKLE_MORGANA","Garras das Trevas":"MAIN_RAPIER_MORGANA",
+  "Lança":"MAIN_SPEAR","Alabarda":"2H_GLAIVE",
+  "Lança Divina":"MAIN_PIKE_MORGANA","Tritão":"2H_TRIDENT",
+  "Lança Garceira":"MAIN_SPEAR_MORGANA",
+  "Bordão":"2H_QUARTERSTAFF","Báculo Sagrado":"2H_HOLYSTAFF_HELL",
+  "Bastão das Trevas":"2H_CURSEDSTAFF_UNDEAD",
+  "Arco Longo":"2H_BOW","Arco de Caça":"2H_WARBOW",
+  "Arco da Chimaera":"2H_BOW_HELL","Balista":"MAIN_RAPIER",
+  "Besta Leve":"MAIN_CROSSBOW","Besta Pesada":"2H_CROSSBOW",
+  "Besta do Inferno":"2H_CROSSBOW_HELL","Lança-virotes":"2H_REPEATINGCROSSBOW",
+  "Cajado de Fogo":"MAIN_FIRESTAFF","Cajado de Fogo de Duas Mãos":"2H_FIRESTAFF",
+  "Cajado Incendiário":"MAIN_FIRESTAFF_MORGANA","Cajado Ardente":"2H_INFERNOSTAFF",
+  "Cajado de Gelo":"MAIN_FROSTSTAFF","Cajado de Gelo de Duas Mãos":"2H_FROSTSTAFF",
+  "Cajado Enregelante":"MAIN_ICICLESTAFF","Cajado do Fundo do Mar":"2H_GLACIALSTAFF",
+  "Cajado Sagrado":"MAIN_HOLYSTAFF","Cajado Sagrado de Duas Mãos":"2H_HOLYSTAFF",
+  "Cajado Avivador":"2H_DIVINESTAFF","Báculo de Luz":"MAIN_HOLYSTAFF_MORGANA",
+  "Cajado Arcano":"MAIN_ARCANESTAFF","Cajado Arcano de Duas Mãos":"2H_ARCANESTAFF",
+  "Orbe das Trevas":"MAIN_ARCANESTAFF_MORGANA","Cajado Oculto":"2H_ENIGMATICSTAFF",
+  "Cajado Amaldiçoado":"MAIN_CURSEDSTAFF","Cajado Amaldiçoado de Duas Mãos":"2H_CURSEDSTAFF",
+  "Cajado Corrompido":"MAIN_CURSEDSTAFF_MORGANA","Clamor das Trevas":"2H_DEMONICSTAFF",
+  "Cajado da Natureza":"MAIN_NATURESTAFF","Cajado da Natureza de Duas Mãos":"2H_NATURESTAFF",
+  "Cajado da Floresta":"MAIN_NATURESTAFFBASIC","Cajado das Raízes":"2H_WILDSTAFF",
+  "Armadura de Placa do Guerreiro":"ARMOR_PLATE_HELL",
+  "Armadura de Placa do Guardião":"ARMOR_PLATE_UNDEAD",
+  "Armadura de Placa Real":"ARMOR_PLATE_ROYAL",
+  "Armadura de Placa do Cavaleiro":"ARMOR_PLATE_MORGAN",
+  "Armadura de Couro do Atirador":"ARMOR_LEATHER_HELL",
+  "Armadura de Couro do Caçador":"ARMOR_LEATHER_UNDEAD",
+  "Armadura de Couro Sombria":"ARMOR_LEATHER_MORGANA",
+  "Armadura de Couro Real":"ARMOR_LEATHER_ROYAL",
+  "Armadura de Tecido do Mago":"ARMOR_CLOTH_HELL",
+  "Armadura de Tecido do Erudito":"ARMOR_CLOTH_UNDEAD",
+  "Manto das Trevas":"ARMOR_CLOTH_MORGANA",
+  "Armadura de Tecido Real":"ARMOR_CLOTH_ROYAL",
+  "Capacete de Placa do Guerreiro":"HEAD_PLATE_HELL",
+  "Capacete de Placa do Inquisidor":"HEAD_PLATE_MORGANA",
+  "Capacete de Placa Real":"HEAD_PLATE_ROYAL",
+  "Capacete de Couro do Caçador":"HEAD_LEATHER_HELL",
+  "Capacete de Couro do Espião":"HEAD_LEATHER_MORGANA",
+  "Chapéu do Atirador":"HEAD_LEATHER_UNDEAD",
+  "Capuz do Mago":"HEAD_CLOTH_HELL",
+  "Capuz do Erudito":"HEAD_CLOTH_UNDEAD",
+  "Capuz das Trevas":"HEAD_CLOTH_MORGANA",
+  "Bota de Placa do Guerreiro":"SHOES_PLATE_HELL",
+  "Bota de Placa Real":"SHOES_PLATE_ROYAL",
+  "Bota de Placa do Cavaleiro":"SHOES_PLATE_MORGANA",
+  "Bota de Couro do Caçador":"SHOES_LEATHER_HELL",
+  "Bota de Couro Sombria":"SHOES_LEATHER_MORGANA",
+  "Bota de Couro Real":"SHOES_LEATHER_ROYAL",
+  "Sandália do Mago":"SHOES_CLOTH_HELL",
+  "Sandália das Trevas":"SHOES_CLOTH_MORGANA",
+  "Sandália Real":"SHOES_CLOTH_ROYAL",
+  "Bolsa do Aventureiro":"BAG","Mochila do Aventureiro":"BAG2",
+  "Capa do Aventureiro":"CAPE","Capa do Esquadrão":"FACTION_CAPE",
+  // Placa
+  "Armadura de Soldado":"ARMOR_PLATE_HELL","Armadura de Guardião":"ARMOR_PLATE_UNDEAD",
+  "Armadura de Cavaleiro":"ARMOR_PLATE_MORGAN","Armadura Real":"ARMOR_PLATE_ROYAL",
+  "Elmo do Soldado":"HEAD_PLATE_HELL","Elmo do Guardião":"HEAD_PLATE_UNDEAD",
+  "Elmo do Cavaleiro":"HEAD_PLATE_MORGAN","Elmo Real":"HEAD_PLATE_ROYAL",
+  "Bota do Soldado":"SHOES_PLATE_HELL","Bota do Guardião":"SHOES_PLATE_UNDEAD",
+  "Bota do Cavaleiro":"SHOES_PLATE_MORGAN","Bota Real":"SHOES_PLATE_ROYAL",
+  // Couro
+  "Jaqueta do Caçador":"ARMOR_LEATHER_HELL","Jaqueta do Stalker":"ARMOR_LEATHER_MORGANA",
+  "Jaqueta do Hellion":"ARMOR_LEATHER_UNDEAD","Jaqueta Real":"ARMOR_LEATHER_ROYAL",
+  "Capuz do Caçador":"HEAD_LEATHER_HELL","Capuz do Stalker":"HEAD_LEATHER_MORGANA",
+  "Capuz do Hellion":"HEAD_LEATHER_UNDEAD","Capuz Real de Couro":"HEAD_LEATHER_ROYAL",
+  "Sapato do Caçador":"SHOES_LEATHER_HELL","Sapato do Stalker":"SHOES_LEATHER_MORGANA",
+  "Sapato do Hellion":"SHOES_LEATHER_UNDEAD","Sapato Real":"SHOES_LEATHER_ROYAL",
+  // Tecido — Robes
+  "Robe do Mago":"ARMOR_CLOTH_HELL","Robe do Erudito":"ARMOR_CLOTH_UNDEAD",
+  "Robe do Clérigo":"ARMOR_CLOTH_KEEPER","Robe Real":"ARMOR_CLOTH_ROYAL",
+  "Manto das Trevas":"ARMOR_CLOTH_MORGANA","Manto Sombrio":"ARMOR_CLOTH_UNDEAD",
+  // Tecido — Capuzes
+  "Capuz do Mago":"HEAD_CLOTH_HELL","Capuz do Erudito":"HEAD_CLOTH_UNDEAD",
+  "Capuz do Clérigo":"HEAD_CLOTH_KEEPER","Capuz das Trevas":"HEAD_CLOTH_MORGANA",
+  "Capuz Real de Tecido":"HEAD_CLOTH_ROYAL",
+  // Tecido — Sandálias
+  "Sandália do Mago":"SHOES_CLOTH_HELL","Sandália do Erudito":"SHOES_CLOTH_UNDEAD",
+  "Sandália do Clérigo":"SHOES_CLOTH_KEEPER","Sandália das Trevas":"SHOES_CLOTH_MORGANA",
+  "Sandália Real":"SHOES_CLOTH_ROYAL",
+};
+
+function resolveImg(nome,tier){
+  if(!nome)return null;
+  var t=tier||8;
+  if(ITEM_IMG[nome])return ITEM_IMG[nome];
+  // Tentar CRAFT_SUFFIX — remover sufixo de tier
+  var base=nome.replace(/ T\d+(\.\d+)?$/,"").trim();
+  if(CRAFT_SUFFIX[base])return "T"+t+"_"+CRAFT_SUFFIX[base];
+  // Fallback por tipo
+  if(nome.indexOf("Lingote")>=0)return"T"+t+"_METALBAR";
+  if(nome.indexOf("Couro")>=0)return"T"+t+"_LEATHER";
+  if(nome.indexOf("Pano")>=0||nome.indexOf("Seda")>=0)return"T"+t+"_CLOTH";
+  if(nome.indexOf("Tábua")>=0||nome.indexOf("Madeira")>=0)return"T"+t+"_PLANKS";
+  if(nome.indexOf("Bloco")>=0||nome.indexOf("Pedra")>=0)return"T"+t+"_STONEBLOCK";
+  if(nome.indexOf("Runa")>=0)return"T"+t+"_RUNE";
+  if(nome.indexOf("Alma")>=0)return"T"+t+"_SOUL";
+  if(nome.indexOf("Relíquia")>=0||nome.indexOf("Reliquia")>=0)return"T"+t+"_RELIC";
+  return null;
+}
+
+
+// Combinar receitas fixas com as geradas pelo banco
+function todasReceitas(){
+  // Receitas aprendidas pelo usuário têm prioridade
+  return [...(typeof RECEITAS_BD !== 'undefined' ? RECEITAS_BD : []),...recApr];
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// GERADOR DE RECEITAS — 1840 receitas T4–T8 com encantamentos
+// ═══════════════════════════════════════════════════════════════
+
+const MAT_NOMES = {
+  METALBAR: {2:"Lingote de Bronze",3:"Lingote de Ferro",4:"Lingote de Aço",5:"Lingote de Aço Luminoso",6:"Lingote de Aço Sombrio",7:"Lingote de Aço Feérico",8:"Lingote de Aço Arcano"},
+  LEATHER:  {2:"Couro",3:"Couro Trabalhado",4:"Couro Rígido",5:"Couro Resistente",6:"Couro da Sombra",7:"Couro Selvagem",8:"Couro Excepcional"},
+  CLOTH:    {2:"Pano Simples",3:"Pano Fino",4:"Pano Ornamentado",5:"Pano Mágico",6:"Pano da Sombra",7:"Pano Selvagem",8:"Pano Arcano"},
+  PLANKS:   {2:"Tábua de Pinheiro",3:"Tábua de Carvalho",4:"Tábua de Pinho",5:"Tábua de Cedro",6:"Tábua de Briar",7:"Tábua de Ashenbark",8:"Tábua Arcana"},
+  STONEBLOCK:{2:"Bloco de Calcário",3:"Bloco de Arenito",4:"Bloco de Travertino",5:"Bloco de Mármore",6:"Bloco de Granito",7:"Bloco de Sílex",8:"Bloco de Basalto"},
+  RUNE:  {4:"Runa (Adepto)",5:"Runa (Especialista)",6:"Runa (Mestre)",7:"Runa (Grão-mestre)",8:"Runa (Ancião)"},
+  SOUL:  {4:"Alma (Adepto)",5:"Alma (Especialista)",6:"Alma (Mestre)",7:"Alma (Grão-mestre)",8:"Alma (Ancião)"},
+  RELIC: {4:"Relíquia (Adepto)",5:"Relíquia (Especialista)",6:"Relíquia (Mestre)",7:"Relíquia (Grão-mestre)",8:"Relíquia (Ancião)"},
+};
+const FOCO_T = {4:3000,5:6000,6:10000,7:18000,8:30000};
+const QTD_ENC_T = {4:16,5:32,6:64,7:128,8:192};
+const QTD_MAP = {
+  "1H":      {4:8,5:10,6:15,7:20,8:32},
+  "2H":      {4:16,5:20,6:30,7:40,8:64},
+  armadura:  {4:8,5:10,6:15,7:20,8:32},
+  capacete:  {4:6,5:8,6:12,7:16,8:24},
+  bota:      {4:6,5:8,6:12,7:16,8:24},
+  bolsa:     {4:16,5:20,6:30,7:40,8:64},
+  capa:      {4:8,5:10,6:15,7:20,8:32},
+};
+
+function mkMat(tipo,tier,q){return{n:MAT_NOMES[tipo][tier],q,t:tier,id:`T${tier}_${tipo}`}}
+
+// [nome, mat1, mat2, mao/tipo, cat]
+const DEF_ARMAS=[
+  ["Espada Larga","METALBAR","PLANKS","1H","Armas"],
+  ["Espada da Claymore","METALBAR","PLANKS","2H","Armas"],
+  ["Espada da Ruína","METALBAR","PLANKS","2H","Armas"],
+  ["Espada Dupla","METALBAR","PLANKS","2H","Armas"],
+  ["Espada Escavadora","METALBAR","PLANKS","1H","Armas"],
+  ["Machado de Guerra","METALBAR","PLANKS","1H","Armas"],
+  ["Machado Duplo","METALBAR","PLANKS","2H","Armas"],
+  ["Machado Sombrio","METALBAR","PLANKS","2H","Armas"],
+  ["Gadanha","METALBAR","PLANKS","2H","Armas"],
+  ["Machado do Carniceiro","METALBAR","PLANKS","1H","Armas"],
+  ["Maça","METALBAR","STONEBLOCK","1H","Armas"],
+  ["Flail","METALBAR","STONEBLOCK","2H","Armas"],
+  ["Maça Bestial","METALBAR","STONEBLOCK","1H","Armas"],
+  ["Martelo da Infâmia","METALBAR","STONEBLOCK","2H","Armas"],
+  ["Martelo de Guerra","METALBAR","STONEBLOCK","2H","Armas"],
+  ["Martelo de Óleos","METALBAR","STONEBLOCK","2H","Armas"],
+  ["Martelo Sagrado","METALBAR","STONEBLOCK","2H","Armas"],
+  ["Punhal","METALBAR","LEATHER","1H","Armas"],
+  ["Punhal Duplo","METALBAR","LEATHER","2H","Armas"],
+  ["Adagas da Morte","METALBAR","LEATHER","2H","Armas"],
+  ["Garras das Trevas","METALBAR","LEATHER","1H","Armas"],
+  ["Lança","METALBAR","PLANKS","1H","Armas"],
+  ["Alabarda","METALBAR","PLANKS","2H","Armas"],
+  ["Lança Divina","METALBAR","PLANKS","1H","Armas"],
+  ["Tritão","METALBAR","PLANKS","2H","Armas"],
+  ["Lança Garceira","METALBAR","PLANKS","1H","Armas"],
+  ["Bordão","PLANKS","METALBAR","2H","Armas"],
+  ["Báculo Sagrado","PLANKS","METALBAR","2H","Armas"],
+  ["Bastão das Trevas","PLANKS","METALBAR","2H","Armas"],
+  ["Arco Longo","PLANKS","LEATHER","2H","Armas"],
+  ["Arco de Caça","PLANKS","LEATHER","2H","Armas"],
+  ["Arco da Chimaera","PLANKS","LEATHER","2H","Armas"],
+  ["Balista","METALBAR","PLANKS","1H","Armas"],
+  ["Besta Leve","METALBAR","PLANKS","1H","Armas"],
+  ["Besta Pesada","METALBAR","PLANKS","2H","Armas"],
+  ["Besta do Inferno","METALBAR","PLANKS","2H","Armas"],
+  ["Lança-virotes","METALBAR","PLANKS","2H","Armas"],
+  ["Cajado de Fogo","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado de Fogo de Duas Mãos","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Incendiário","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Ardente","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado de Gelo","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado de Gelo de Duas Mãos","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Enregelante","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado do Fundo do Mar","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Sagrado","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Sagrado de Duas Mãos","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Avivador","METALBAR","CLOTH","2H","Armas"],
+  ["Báculo de Luz","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Arcano","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Arcano de Duas Mãos","METALBAR","CLOTH","2H","Armas"],
+  ["Orbe das Trevas","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Oculto","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Amaldiçoado","METALBAR","CLOTH","1H","Armas"],
+  ["Cajado Amaldiçoado de Duas Mãos","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado Corrompido","METALBAR","CLOTH","1H","Armas"],
+  ["Clamor das Trevas","METALBAR","CLOTH","2H","Armas"],
+  ["Cajado da Natureza","PLANKS","CLOTH","1H","Armas"],
+  ["Cajado da Natureza de Duas Mãos","PLANKS","CLOTH","2H","Armas"],
+  ["Cajado da Floresta","PLANKS","CLOTH","1H","Armas"],
+  ["Cajado das Raízes","PLANKS","CLOTH","2H","Armas"],
+];
+
+const DEF_EQ=[
+  // [nome, mat1, mat2, tipo_qtd, cat]
+
+  // ── PLACA ─────────────────────────────────────────────────────
+  // Armaduras
+  ["Armadura de Soldado","METALBAR","LEATHER","armadura","Armaduras"],
+  ["Armadura de Guardião","METALBAR","LEATHER","armadura","Armaduras"],
+  ["Armadura de Cavaleiro","METALBAR","LEATHER","armadura","Armaduras"],
+  ["Armadura Real","METALBAR","LEATHER","armadura","Armaduras"],
+  // Capacetes
+  ["Elmo do Soldado","METALBAR","LEATHER","capacete","Capacetes"],
+  ["Elmo do Guardião","METALBAR","LEATHER","capacete","Capacetes"],
+  ["Elmo do Cavaleiro","METALBAR","LEATHER","capacete","Capacetes"],
+  ["Elmo Real","METALBAR","LEATHER","capacete","Capacetes"],
+  // Botas
+  ["Bota do Soldado","METALBAR","LEATHER","bota","Botas"],
+  ["Bota do Guardião","METALBAR","LEATHER","bota","Botas"],
+  ["Bota do Cavaleiro","METALBAR","LEATHER","bota","Botas"],
+  ["Bota Real","METALBAR","LEATHER","bota","Botas"],
+
+  // ── COURO ─────────────────────────────────────────────────────
+  // Armaduras (Jaquetas)
+  ["Jaqueta do Caçador","LEATHER","CLOTH","armadura","Armaduras"],
+  ["Jaqueta do Stalker","LEATHER","CLOTH","armadura","Armaduras"],
+  ["Jaqueta do Hellion","LEATHER","CLOTH","armadura","Armaduras"],
+  ["Jaqueta Real","LEATHER","CLOTH","armadura","Armaduras"],
+  // Capacetes (Capuzes de couro)
+  ["Capuz do Caçador","LEATHER","CLOTH","capacete","Capacetes"],
+  ["Capuz do Stalker","LEATHER","CLOTH","capacete","Capacetes"],
+  ["Capuz do Hellion","LEATHER","CLOTH","capacete","Capacetes"],
+  ["Capuz Real de Couro","LEATHER","CLOTH","capacete","Capacetes"],
+  // Sapatos (linha couro)
+  ["Sapato do Caçador","LEATHER","CLOTH","bota","Botas"],
+  ["Sapato do Stalker","LEATHER","CLOTH","bota","Botas"],
+  ["Sapato do Hellion","LEATHER","CLOTH","bota","Botas"],
+  ["Sapato Real","LEATHER","CLOTH","bota","Botas"],
+
+  // ── TECIDO ────────────────────────────────────────────────────
+  // Robes / Mantos
+  ["Robe do Mago","CLOTH","LEATHER","armadura","Armaduras"],
+  ["Robe do Erudito","CLOTH","LEATHER","armadura","Armaduras"],
+  ["Robe do Clérigo","CLOTH","LEATHER","armadura","Armaduras"],
+  ["Robe Real","CLOTH","LEATHER","armadura","Armaduras"],
+  ["Manto das Trevas","CLOTH","LEATHER","armadura","Armaduras"],
+  ["Manto Sombrio","CLOTH","LEATHER","armadura","Armaduras"],
+  // Capuzes (de tecido)
+  ["Capuz do Mago","CLOTH","LEATHER","capacete","Capacetes"],
+  ["Capuz do Erudito","CLOTH","LEATHER","capacete","Capacetes"],
+  ["Capuz do Clérigo","CLOTH","LEATHER","capacete","Capacetes"],
+  ["Capuz das Trevas","CLOTH","LEATHER","capacete","Capacetes"],
+  ["Capuz Real de Tecido","CLOTH","LEATHER","capacete","Capacetes"],
+  // Sandálias (linha tecido)
+  ["Sandália do Mago","CLOTH","LEATHER","bota","Botas"],
+  ["Sandália do Erudito","CLOTH","LEATHER","bota","Botas"],
+  ["Sandália do Clérigo","CLOTH","LEATHER","bota","Botas"],
+  ["Sandália das Trevas","CLOTH","LEATHER","bota","Botas"],
+  ["Sandália Real","CLOTH","LEATHER","bota","Botas"],
+];
+
+const DEF_ACES=[
+  ["Bolsa do Aventureiro","CLOTH","bolsa","Bolsas"],
+  ["Mochila do Aventureiro","CLOTH","bolsa","Bolsas"],
+  ["Capa do Aventureiro","LEATHER","capa","Capas"],
+  ["Capa do Esquadrão","LEATHER","capa","Capas"],
+];
+
+const ENC_TIPOS = [
+  {enc:0,suffix:"",encMat:null},
+  {enc:1,suffix:".1",encMat:"RUNE"},
+  {enc:2,suffix:".2",encMat:"SOUL"},
+  {enc:3,suffix:".3",encMat:"RELIC"},
+];
+
+function gerarReceitas(){
+  const receitas=[];
+  let id=1;
+  for(const tier of [4,5,6,7,8]){
+    const foco=FOCO_T[tier];
+    // ARMAS
+    for(const [nome,m1,m2,mao,cat] of DEF_ARMAS){
+      const qtd1=QTD_MAP[mao][tier];
+      const qtd2=Math.floor(qtd1/2);
+      const qtdEncArma=mao==="2H"?382:288;
+      for(const {enc,suffix,encMat} of ENC_TIPOS){
+        const mats=[mkMat(m1,tier,qtd1),mkMat(m2,tier,qtd2)];
+        if(encMat)mats.push(mkMat(encMat,tier,qtdEncArma));
+        const nm=`${nome} T${tier}${suffix}`;receitas.push({id:id++,n:nm,nome:nm,t:tier,tier,enc,cat,foco,ret:15.2,ret_f:47.9,taxa_m:3,mao,mats,origem:'bd'});
+      }
+    }
+    // EQUIPAMENTOS
+    for(const [nome,m1,m2,tq,cat] of DEF_EQ){
+      const qtd1=QTD_MAP[tq][tier];
+      const qtd2=Math.floor(qtd1/2);
+      const qtdEncEq=tq==="capacete"||tq==="bota"?92:192;
+      for(const {enc,suffix,encMat} of ENC_TIPOS){
+        const mats=[mkMat(m1,tier,qtd1),mkMat(m2,tier,qtd2)];
+        if(encMat)mats.push(mkMat(encMat,tier,qtdEncEq));
+        const nm=`${nome} T${tier}${suffix}`;receitas.push({id:id++,n:nm,nome:nm,t:tier,tier,enc,cat,foco,ret:15.2,ret_f:47.9,taxa_m:3,mats,origem:'bd'});
+      }
+    }
+    // ACESSÓRIOS (só base, sem encantamento)
+    for(const [nome,matTipo,tq,cat] of DEF_ACES){
+      const qtd1=QTD_MAP[tq][tier];
+      const nm=`${nome} T${tier}`;receitas.push({id:id++,n:nm,nome:nm,t:tier,tier,enc:0,cat,foco,ret:15.2,ret_f:47.9,taxa_m:3,mats:[mkMat(matTipo,tier,qtd1)],origem:'bd'});
+    }
+  }
+  return receitas;
+}
+
+const RECEITAS_BD = gerarReceitas();
+
+
+// Quantidades reais de encantamento por TIPO DE ITEM (fixo, independe do tier)
+const ENC_QTD_TIPO={
+  capacete: 92,   // elmos
+  bota:     92,   // botas
+  armadura: 192,  // peitos (armaduras)
+  "1H":     288,  // armas de 1 mão
+  "2H":     382,  // armas de 2 mãos
+};
+// Mantido para compatibilidade (exibição geral)
+const ENC_QTD={
+  capacete:92, bota:92, armadura:192, "1H":288, "2H":382
+};
+function getEncQtd(cat,mao){
+  if(cat==="Capacetes")return 92;
+  if(cat==="Botas")return 92;
+  if(cat==="Armaduras")return 192;
+  if(cat==="Bolsas"||cat==="Capas")return 192;
+  if(mao==="2H")return 382;
+  return 288; // 1H default
+}
+
+const RECEITAS=[
+  {id:1,nome:"Armadura Real T8",tier:8,enc:0,cat:"Armaduras",foco:30000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Aço Arcano",q:32,t:8},{n:"Couro Excepcional",q:16,t:8}]},
+  {id:2,nome:"Armadura Real T8.1",tier:8,enc:1,cat:"Armaduras",foco:30000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Aço Arcano",q:32,t:8},{n:"Couro Excepcional",q:16,t:8},{n:"Runa de Poder",q:192,t:8}]},
+  {id:3,nome:"Capacete de Ferro T8",tier:8,enc:0,cat:"Capacetes",foco:20000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Aço Arcano",q:24,t:8},{n:"Couro Excepcional",q:8,t:8}]},
+  {id:4,nome:"Espada de Guerreiro T8",tier:8,enc:0,cat:"Armas",foco:25000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Aço Arcano",q:20,t:8},{n:"Tábua de Madeira Arcana",q:8,t:8}]},
+  {id:5,nome:"Bolsa de Aventureiro T8",tier:8,enc:0,cat:"Bolsas",foco:15000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Pano de Seda Arcana",q:96,t:8}]},
+  {id:6,nome:"Botas Reais T8",tier:8,enc:0,cat:"Botas",foco:18000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Couro Excepcional",q:24,t:8},{n:"Pano de Seda Arcana",q:8,t:8}]},
+  {id:7,nome:"Armadura de Guerreiro T7",tier:7,enc:0,cat:"Armaduras",foco:12000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Adamantina",q:24,t:7},{n:"Couro Feroz",q:12,t:7}]},
+  {id:8,nome:"Espada Longa T7",tier:7,enc:0,cat:"Armas",foco:10000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Barra de Adamantina",q:16,t:7},{n:"Tábua de Madeira Arcana",q:8,t:8}]},
+  {id:9,nome:"Bolsa Grande T7",tier:7,enc:0,cat:"Bolsas",foco:8000,ret:15.2,ret_f:47.9,taxa_m:3,origem:"manual",mats:[{n:"Pano de Seda Arcana",q:64,t:8}]},
+];
+const PM={
+  "barra de aço arcano":{id:"T8_METALBAR",pm:75000,px:80000,med:77500,pc:70000,t:8,mat:1,at:1779992344000},
+  "couro excepcional":{id:"T8_LEATHER",pm:45000,px:50000,med:47000,pc:42000,t:8,mat:1,at:1779991384000},
+  "pano arcano":{id:"T8_CLOTH",pm:30000,px:35000,med:32000,pc:28000,t:8,mat:1,at:1779992584000},
+  "tábua arcana":{id:"T8_PLANKS",pm:25000,px:28000,med:26000,pc:23000,t:8,mat:1,at:1779990304000},
+  "bloco de basalto":{id:"T8_STONEBLOCK",pm:20000,px:23000,med:21000,pc:18000,t:8,mat:1,at:1779985684000},
+  "runa (ancião)":{id:"T8_RUNE",pm:3500,px:4000,med:3700,pc:3200,t:8,mat:1,at:1779992284000},
+  "alma (ancião)":{id:"T8_SOUL",pm:8000,px:9000,med:8500,pc:7500,t:8,mat:1,at:1779991864000},
+  "relíquia (ancião)":{id:"T8_RELIC",pm:15000,px:17000,med:16000,pc:14000,t:8,mat:1,at:1779989644000},
+  "lingote de aço feérico":{id:"T7_METALBAR",pm:38000,px:42000,med:40000,pc:36000,t:7,mat:1,at:1779990784000},
+  "couro selvagem":{id:"T7_LEATHER",pm:22000,px:25000,med:23500,pc:21000,t:7,mat:1,at:1779987304000},
+  "pano selvagem":{id:"T7_CLOTH",pm:18000,px:21000,med:19500,pc:17000,t:7,mat:1,at:1779984124000},
+  "tábua de ashenbark":{id:"T7_PLANKS",pm:16000,px:19000,med:17500,pc:15000,t:7,mat:1,at:1779980164000},
+  "runa (grão-mestre)":{id:"T7_RUNE",pm:900,px:1100,med:1000,pc:850,t:7,mat:1,at:1779992464000},
+  "alma (grão-mestre)":{id:"T7_SOUL",pm:2200,px:2600,med:2400,pc:2000,t:7,mat:1,at:1779991144000},
+  "relíquia (grão-mestre)":{id:"T7_RELIC",pm:4200,px:5000,med:4600,pc:3900,t:7,mat:1,at:1779988804000},
+  "lingote de aço sombrio":{id:"T6_METALBAR",pm:18000,px:21000,med:19500,pc:17000,t:6,mat:1,at:1779982084000},
+  "couro da sombra":{id:"T6_LEATHER",pm:10000,px:12000,med:11000,pc:9500,t:6,mat:1,at:1779971464000},
+  "pano da sombra":{id:"T6_CLOTH",pm:7500,px:9000,med:8200,pc:7000,t:6,mat:1,at:1779989044000},
+  "runa (mestre)":{id:"T6_RUNE",pm:320,px:420,med:370,pc:290,t:6,mat:1,at:1779992104000},
+  "alma (mestre)":{id:"T6_SOUL",pm:750,px:950,med:850,pc:700,t:6,mat:1,at:1779990724000},
+  "relíquia (mestre)":{id:"T6_RELIC",pm:1400,px:1800,med:1600,pc:1250,t:6,mat:1,at:1779987544000},
+  "armadura de placa do guerreiro t8":{id:"T8_ARMOR_PLATE_HELL",pm:4200000,px:4500000,med:4350000,pc:4000000,t:8,mat:0,at:1779991624000},
+  "armadura de placa do guerreiro t8.1":{id:"T8_ARMOR_PLATE_HELL",pm:5800000,px:6200000,med:6000000,pc:5500000,t:8,mat:0,at:1779990064000},
+  "capacete de placa do guerreiro t8":{id:"T8_HEAD_PLATE_HELL",pm:3100000,px:3400000,med:3250000,pc:2900000,t:8,mat:0,at:1779991024000},
+  "espada longa do guerreiro t8":{id:"T8_MAIN_SWORD",pm:3800000,px:4100000,med:3950000,pc:3600000,t:8,mat:0,at:1779991984000},
+  "bolsa do aventureiro t8":{id:"T8_BAG",pm:800000,px:900000,med:850000,pc:780000,t:8,mat:0,at:1779988444000},
+  "bota de placa do guerreiro t8":{id:"T8_SHOES_PLATE_HELL",pm:2900000,px:3200000,med:3050000,pc:2750000,t:8,mat:0,at:1779990544000},
+  "armadura de placa do veterano t7":{id:"T7_ARMOR_PLATE_HELL",pm:1800000,px:2000000,med:1900000,pc:1700000,t:7,mat:0,at:1779989584000},
+  "espada longa do veterano t7":{id:"T7_MAIN_SWORD",pm:1900000,px:2100000,med:2000000,pc:1800000,t:7,mat:0,at:1779987904000},
+  "bolsa do aventureiro t7":{id:"T7_BAG",pm:450000,px:500000,med:475000,pc:430000,t:7,mat:0,at:1779985204000},
+};
+const RESULTADOS=[
+  {rid:2,nome:"Armadura Real T8.1",tier:8,enc:1,cat:"Armaduras",ce:3215616,pv:5800000,ll:2410384,mg:41.56,roi:74.96,lpf:80.35,ok:1},
+  {rid:4,nome:"Espada de Guerreiro T8",tier:8,enc:0,cat:"Armas",ce:1441600,pv:3800000,ll:2244400,mg:59.06,roi:155.69,lpf:89.78,ok:1},
+  {rid:6,nome:"Botas Reais T8",tier:8,enc:0,cat:"Botas",ce:1119360,pv:2900000,ll:1693640,mg:58.4,roi:151.3,lpf:94.09,ok:1},
+  {rid:1,nome:"Armadura Real T8",tier:8,enc:0,cat:"Armaduras",ce:2645760,pv:4200000,ll:1428240,mg:34.01,roi:53.98,lpf:47.61,ok:1},
+  {rid:3,nome:"Capacete de Ferro T8",tier:8,enc:0,cat:"Capacetes",ce:1831680,pv:3100000,ll:1175320,mg:37.91,roi:64.17,lpf:58.77,ok:1},
+  {rid:8,nome:"Espada Longa T7",tier:7,enc:0,cat:"Armas",ce:685184,pv:1900000,ll:1157816,mg:60.94,roi:168.98,lpf:115.78,ok:1},
+  {rid:7,nome:"Armadura de Guerreiro T7",tier:7,enc:0,cat:"Armaduras",ce:997248,pv:1800000,ll:748752,mg:41.6,roi:75.08,lpf:62.4,ok:1},
+  {rid:9,nome:"Bolsa Grande T7",tier:7,enc:0,cat:"Bolsas",ce:1628160,pv:450000,ll:-1191660,mg:-264.81,roi:-73.19,lpf:-148.96,ok:0},
+  {rid:5,nome:"Bolsa de Aventureiro T8",tier:8,enc:0,cat:"Bolsas",ce:2442240,pv:800000,ll:-1666240,mg:-208.28,roi:-68.23,lpf:-111.08,ok:0},
+];
+
+const MATS=[{n:"Barra de Bronze",id:"T2_METALBAR",t:2,tp:"metal"},
+{n:"Barra de Ferro",id:"T3_METALBAR",t:3,tp:"metal"},
+{n:"Barra de Aço",id:"T4_METALBAR",t:4,tp:"metal"},
+{n:"Barra de Titânio",id:"T5_METALBAR",t:5,tp:"metal"},
+{n:"Barra de Runite",id:"T6_METALBAR",t:6,tp:"metal"},
+{n:"Barra de Adamantina",id:"T7_METALBAR",t:7,tp:"metal"},
+{n:"Barra de Aço Arcano",id:"T8_METALBAR",t:8,tp:"metal"},
+{n:"Couro Fino",id:"T2_LEATHER",t:2,tp:"couro"},
+{n:"Couro Resistente",id:"T3_LEATHER",t:3,tp:"couro"},
+{n:"Couro Pesado",id:"T4_LEATHER",t:4,tp:"couro"},
+{n:"Couro Endurecido",id:"T5_LEATHER",t:5,tp:"couro"},
+{n:"Couro Sombrio",id:"T6_LEATHER",t:6,tp:"couro"},
+{n:"Couro Feroz",id:"T7_LEATHER",t:7,tp:"couro"},
+{n:"Couro Excepcional",id:"T8_LEATHER",t:8,tp:"couro"},
+{n:"Tecido Simples",id:"T2_CLOTH",t:2,tp:"pano"},
+{n:"Tecido Fino",id:"T3_CLOTH",t:3,tp:"pano"},
+{n:"Tecido Resistente",id:"T4_CLOTH",t:4,tp:"pano"},
+{n:"Tecido Encantado",id:"T5_CLOTH",t:5,tp:"pano"},
+{n:"Seda Sombria",id:"T6_CLOTH",t:6,tp:"pano"},
+{n:"Seda Feroz",id:"T7_CLOTH",t:7,tp:"pano"},
+{n:"Pano de Seda Arcana",id:"T8_CLOTH",t:8,tp:"pano"},
+{n:"Tábua de Bétula",id:"T2_PLANKS",t:2,tp:"madeira"},
+{n:"Tábua de Carvalho",id:"T3_PLANKS",t:3,tp:"madeira"},
+{n:"Tábua de Teixo",id:"T4_PLANKS",t:4,tp:"madeira"},
+{n:"Tábua de Pinheiro",id:"T5_PLANKS",t:5,tp:"madeira"},
+{n:"Tábua de Cedro",id:"T6_PLANKS",t:6,tp:"madeira"},
+{n:"Tábua de Sequoia",id:"T7_PLANKS",t:7,tp:"madeira"},
+{n:"Tábua de Madeira Arcana",id:"T8_PLANKS",t:8,tp:"madeira"},
+{n:"Bloco de Arenito",id:"T2_STONEBLOCK",t:2,tp:"pedra"},
+{n:"Bloco de Travertino",id:"T3_STONEBLOCK",t:3,tp:"pedra"},
+{n:"Bloco de Mármore",id:"T4_STONEBLOCK",t:4,tp:"pedra"},
+{n:"Bloco de Granito",id:"T5_STONEBLOCK",t:5,tp:"pedra"},
+{n:"Bloco de Sílex",id:"T6_STONEBLOCK",t:6,tp:"pedra"},
+{n:"Bloco de Basalto",id:"T7_STONEBLOCK",t:7,tp:"pedra"},
+{n:"Pedra Rígida",id:"T8_STONEBLOCK",t:8,tp:"pedra"},
+{n:"Runa Simples",id:"T4_RUNE",t:4,tp:"runa",enc:1},
+{n:"Runa Fina",id:"T5_RUNE",t:5,tp:"runa",enc:1},
+{n:"Runa Elaborada",id:"T6_RUNE",t:6,tp:"runa",enc:1},
+{n:"Runa Excepcional",id:"T7_RUNE",t:7,tp:"runa",enc:1},
+{n:"Runa de Poder",id:"T8_RUNE",t:8,tp:"runa",enc:1},
+{n:"Alma Simples",id:"T4_SOUL",t:4,tp:"alma",enc:2},
+{n:"Alma Fina",id:"T5_SOUL",t:5,tp:"alma",enc:2},
+{n:"Alma Elaborada",id:"T6_SOUL",t:6,tp:"alma",enc:2},
+{n:"Alma Excepcional",id:"T7_SOUL",t:7,tp:"alma",enc:2},
+{n:"Alma de Briga",id:"T8_SOUL",t:8,tp:"alma",enc:2},
+{n:"Relíquia Simples",id:"T4_RELIC",t:4,tp:"reliquia",enc:3},
+{n:"Relíquia Fina",id:"T5_RELIC",t:5,tp:"reliquia",enc:3},
+{n:"Relíquia Elaborada",id:"T6_RELIC",t:6,tp:"reliquia",enc:3},
+{n:"Relíquia Excepcional",id:"T7_RELIC",t:7,tp:"reliquia",enc:3},
+{n:"Relíquia de Mestre",id:"T8_RELIC",t:8,tp:"reliquia",enc:3},
+{n:"Artefato de Espada T4",id:"T4_ART_SWORD",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Espada T5",id:"T5_ART_SWORD",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Espada T6",id:"T6_ART_SWORD",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Espada T7",id:"T7_ART_SWORD",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Espada T8",id:"T8_ART_SWORD",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Machado T4",id:"T4_ART_AXE",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Machado T5",id:"T5_ART_AXE",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Machado T6",id:"T6_ART_AXE",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Machado T7",id:"T7_ART_AXE",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Machado T8",id:"T8_ART_AXE",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Maça T4",id:"T4_ART_MACE",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Maça T5",id:"T5_ART_MACE",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Maça T6",id:"T6_ART_MACE",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Maça T7",id:"T7_ART_MACE",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Maça T8",id:"T8_ART_MACE",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Martelo T4",id:"T4_ART_HAMMER",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Martelo T5",id:"T5_ART_HAMMER",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Martelo T6",id:"T6_ART_HAMMER",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Martelo T7",id:"T7_ART_HAMMER",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Martelo T8",id:"T8_ART_HAMMER",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Arco T4",id:"T4_ART_BOW",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Arco T5",id:"T5_ART_BOW",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Arco T6",id:"T6_ART_BOW",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Arco T7",id:"T7_ART_BOW",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Arco T8",id:"T8_ART_BOW",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Besta T4",id:"T4_ART_XBOW",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Besta T5",id:"T5_ART_XBOW",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Besta T6",id:"T6_ART_XBOW",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Besta T7",id:"T7_ART_XBOW",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Besta T8",id:"T8_ART_XBOW",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Adaga T4",id:"T4_ART_DAGGER",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Adaga T5",id:"T5_ART_DAGGER",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Adaga T6",id:"T6_ART_DAGGER",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Adaga T7",id:"T7_ART_DAGGER",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Adaga T8",id:"T8_ART_DAGGER",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Lança T4",id:"T4_ART_SPEAR",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Lança T5",id:"T5_ART_SPEAR",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Lança T6",id:"T6_ART_SPEAR",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Lança T7",id:"T7_ART_SPEAR",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Lança T8",id:"T8_ART_SPEAR",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado de Fogo T4",id:"T4_ART_FIRE",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado de Fogo T5",id:"T5_ART_FIRE",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado de Fogo T6",id:"T6_ART_FIRE",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado de Fogo T7",id:"T7_ART_FIRE",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado de Fogo T8",id:"T8_ART_FIRE",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Sagrado T4",id:"T4_ART_HOLY",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Sagrado T5",id:"T5_ART_HOLY",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Sagrado T6",id:"T6_ART_HOLY",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Sagrado T7",id:"T7_ART_HOLY",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Sagrado T8",id:"T8_ART_HOLY",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Arcano T4",id:"T4_ART_ARCANE",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Arcano T5",id:"T5_ART_ARCANE",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Arcano T6",id:"T6_ART_ARCANE",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Arcano T7",id:"T7_ART_ARCANE",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado Arcano T8",id:"T8_ART_ARCANE",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado das Trevas T4",id:"T4_ART_CURSED",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado das Trevas T5",id:"T5_ART_CURSED",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado das Trevas T6",id:"T6_ART_CURSED",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado das Trevas T7",id:"T7_ART_CURSED",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado das Trevas T8",id:"T8_ART_CURSED",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado da Natureza T4",id:"T4_ART_NATURE",t:4,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado da Natureza T5",id:"T5_ART_NATURE",t:5,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado da Natureza T6",id:"T6_ART_NATURE",t:6,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado da Natureza T7",id:"T7_ART_NATURE",t:7,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Cajado da Natureza T8",id:"T8_ART_NATURE",t:8,tp:"artefato",cat:"Armas"},
+{n:"Artefato de Armadura (Placa) T4",id:"T4_ART_ARM_PL",t:4,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Placa) T5",id:"T5_ART_ARM_PL",t:5,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Placa) T6",id:"T6_ART_ARM_PL",t:6,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Placa) T7",id:"T7_ART_ARM_PL",t:7,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Placa) T8",id:"T8_ART_ARM_PL",t:8,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Couro) T4",id:"T4_ART_ARM_LE",t:4,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Couro) T5",id:"T5_ART_ARM_LE",t:5,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Couro) T6",id:"T6_ART_ARM_LE",t:6,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Couro) T7",id:"T7_ART_ARM_LE",t:7,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Armadura (Couro) T8",id:"T8_ART_ARM_LE",t:8,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Veste Arcana T4",id:"T4_ART_ARM_CL",t:4,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Veste Arcana T5",id:"T5_ART_ARM_CL",t:5,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Veste Arcana T6",id:"T6_ART_ARM_CL",t:6,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Veste Arcana T7",id:"T7_ART_ARM_CL",t:7,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Veste Arcana T8",id:"T8_ART_ARM_CL",t:8,tp:"artefato",cat:"Armaduras"},
+{n:"Artefato de Capacete (Placa) T4",id:"T4_ART_HEL_PL",t:4,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Placa) T5",id:"T5_ART_HEL_PL",t:5,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Placa) T6",id:"T6_ART_HEL_PL",t:6,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Placa) T7",id:"T7_ART_HEL_PL",t:7,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Placa) T8",id:"T8_ART_HEL_PL",t:8,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Couro) T4",id:"T4_ART_HEL_LE",t:4,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Couro) T5",id:"T5_ART_HEL_LE",t:5,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Couro) T6",id:"T6_ART_HEL_LE",t:6,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Couro) T7",id:"T7_ART_HEL_LE",t:7,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capacete (Couro) T8",id:"T8_ART_HEL_LE",t:8,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capuz Arcano T4",id:"T4_ART_HEL_CL",t:4,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capuz Arcano T5",id:"T5_ART_HEL_CL",t:5,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capuz Arcano T6",id:"T6_ART_HEL_CL",t:6,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capuz Arcano T7",id:"T7_ART_HEL_CL",t:7,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Capuz Arcano T8",id:"T8_ART_HEL_CL",t:8,tp:"artefato",cat:"Capacetes"},
+{n:"Artefato de Botas (Placa) T4",id:"T4_ART_BOO_PL",t:4,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Placa) T5",id:"T5_ART_BOO_PL",t:5,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Placa) T6",id:"T6_ART_BOO_PL",t:6,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Placa) T7",id:"T7_ART_BOO_PL",t:7,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Placa) T8",id:"T8_ART_BOO_PL",t:8,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Couro) T4",id:"T4_ART_BOO_LE",t:4,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Couro) T5",id:"T5_ART_BOO_LE",t:5,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Couro) T6",id:"T6_ART_BOO_LE",t:6,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Couro) T7",id:"T7_ART_BOO_LE",t:7,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Botas (Couro) T8",id:"T8_ART_BOO_LE",t:8,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Sandálias Arcanas T4",id:"T4_ART_BOO_CL",t:4,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Sandálias Arcanas T5",id:"T5_ART_BOO_CL",t:5,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Sandálias Arcanas T6",id:"T6_ART_BOO_CL",t:6,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Sandálias Arcanas T7",id:"T7_ART_BOO_CL",t:7,tp:"artefato",cat:"Botas"},
+{n:"Artefato de Sandálias Arcanas T8",id:"T8_ART_BOO_CL",t:8,tp:"artefato",cat:"Botas"}];
+
+let focoAtivo=false,calcFocoAtivo=false,sortKey='ll';
+let alertas=[{id:1,nome:"T8 lucrativo",tipo:"item_lucrativo",val:0,ativo:true},{id:2,nome:"ROI acima de 50%",tipo:"roi_acima",val:50,ativo:true},{id:3,nome:"Margem abaixo de 10%",tipo:"margem_abaixo",val:10,ativo:false}];
+let recApr=[],matsRev=[],nextId=200,apiAnt='',apiOai='',imgB64=null,imgFile=null,acIdx=-1;
+
+// UTILS
+function fmt(n){if(n==null)return'—';const a=Math.abs(n);if(a>=1e6)return(n/1e6).toFixed(1)+'M';if(a>=1e3)return(n/1e3).toFixed(0)+'k';return Math.round(n).toLocaleString('pt-BR')}
+function fmtF(n){return n==null?'—':Math.round(n).toLocaleString('pt-BR')}
+function pct(n,d=1){return n==null?'—':n.toFixed(d)+'%'}
+function tb(t,e=0){return`<span class="tc t${t}">${e>0?`T${t}.${e}`:`T${t}`}</span>`}
+function pcls(v){return v>0?'ptx':v<0?'ltx':'dtx'}
+function getP(nome){return PM[nome.toLowerCase()]||null}
+function tipoCls(tp){const m={metal:'tm',couro:'tc2',pano:'tpa',madeira:'tma',pedra:'tpe',runa:'tru',alma:'tal',reliquia:'tre',artefato:'tar'};return m[tp]||''}
+function tipoIcon(tp){const m={metal:'⚙️',couro:'🟤',pano:'🟣',madeira:'🟢',pedra:'⚪',runa:'🟢',alma:'🔵',reliquia:'🟣',artefato:'🌟'};return m[tp]||'📦'}
+
+// NAV
+document.querySelectorAll('.ni').forEach(el=>el.addEventListener('click',()=>goTo(el.dataset.p)));
+function goTo(p){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('act'));
+  const ne=document.querySelector(`.ni[data-p="${p}"]`);if(ne)ne.classList.add('act');
+  const pe=document.getElementById('page-'+p);if(pe)pe.classList.add('act');
+}
+let sbOpen=true;
+function toggleSB(){sbOpen=!sbOpen;document.getElementById('sb').classList.toggle('col',!sbOpen);document.getElementById('sba').textContent=sbOpen?'◀':'▶'}
+function toggleFoco(){focoAtivo=!focoAtivo;const b=document.getElementById('fbtn');b.textContent=focoAtivo?'⚡ Com Foco':'⚡ Sem Foco';b.classList.toggle('on',focoAtivo);renderScan()}
+
+// DASHBOARD
+function renderDash(){
+  const all=[...RESULTADOS,...recApr.map(r=>r._res).filter(Boolean)];
+  const luc=all.filter(r=>r.ok);
+  const tot=luc.reduce((s,r)=>s+r.ll,0);
+  const maxRoi=Math.max(...all.map(r=>r.roi));
+  document.getElementById('dsub').textContent=`${todasReceitas().length} receitas · ${MATS.length} materiais conhecidos · Caerleon${recApr.length?` · 🧠 ${recApr.length} aprendidas`:''}`;
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><div class="kl">Lucro Total Potencial</div><div class="kv" style="color:var(--profit)">${fmt(tot)}</div><div class="ks">${luc.length} crafts lucrativos</div></div>
+    <div class="kpi"><div class="kl">Maior ROI</div><div class="kv" style="color:var(--gold)">${pct(maxRoi)}</div><div class="ks">Espada Longa T7</div></div>
+    <div class="kpi"><div class="kl">Receitas Cadastradas</div><div class="kv" style="color:var(--white)">${RECEITAS.length+recApr.length}</div><div class="ks">${recApr.length} via aprendizado</div></div>
+    <div class="kpi"><div class="kl">Materiais Conhecidos</div><div class="kv" style="color:var(--purple)">${MATS.length}</div><div class="ks">barras · couros · enc · artefatos</div></div>`;
+  document.getElementById('opps').innerHTML=luc.slice(0,7).map((r,i)=>`
+    <div style="display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:6px;cursor:pointer" onmouseover="this.style.background='var(--raised)'" onmouseout="this.style.background=''">
+      ${iimg(r.imgId||resolveImg(r.nome||r.n||"",r.t||r.tier||8),30)}<span style="font-size:11px;color:var(--dim);width:14px;text-align:right">#${i+1}</span>${tb(r.tier,r.enc||0)}
+      <div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.nome}</div><div style="font-size:10px;color:var(--dim)">${r.cat}</div></div>
+      <div style="text-align:right"><div class="gtx" style="font-size:10px">${pct(r.roi)} ROI</div><div class="ptx" style="font-size:13px;font-weight:700">${fmt(r.ll)}</div></div>
+    </div>`).join('');
+  const cats={};luc.forEach(r=>cats[r.cat]=(cats[r.cat]||0)+r.ll);
+  const sc=Object.entries(cats).sort((a,b)=>b[1]-a[1]);const mx=sc[0]?.[1]||1;
+  const cc={Armas:'#FFC107',Armaduras:'#00E5A0',Botas:'#38BDF8',Capacetes:'#FF4D6B',Bolsas:'#A78BFA'};
+  document.getElementById('cchart').innerHTML=sc.map(([c,v])=>`<div class="cbar"><div class="cbl">${c}</div><div class="cbbg"><div class="cbf" style="width:${Math.round(v/mx*100)}%;background:${cc[c]||'#6B8BAF'}"><span class="cbv">${fmt(v)}</span></div></div></div>`).join('');
+  document.getElementById('losses').innerHTML=all.filter(r=>!r.ok).map(r=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:5px;cursor:pointer" onmouseover="this.style.background='var(--raised)'" onmouseout="this.style.background=''">
+      <div style="display:flex;align-items:center;gap:8px">${iimg(r.imgId||resolveImg(r.nome||r.n||"",r.t||r.tier||8),26)}${tb(r.tier,r.enc||0)}<span style="font-size:12px;color:var(--subtle)">${r.nome||r.n||""}</span></div>
+      <div style="text-align:right"><div class="ltx" style="font-size:13px">${fmt(r.ll)}</div><div style="font-size:10px;color:var(--dim)">${pct(r.roi)}</div></div>
+    </div>`).join('');
+}
+
+// RECEITAS
+function populateRecFilters(){
+  const s=document.getElementById('rcat');
+  [...new Set([...todasReceitas(),...recApr].map(r=>r.cat))].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o)});
+}
+function renderRec(){
+  const all=[...todasReceitas(),...recApr];let list=[...all];
+  const tier=document.getElementById('rt').value;
+  const cat=document.getElementById('rcat').value;
+  const busca=document.getElementById('rbusca').value.toLowerCase();
+  if(tier)list=list.filter(r=>String(r.tier)===tier);
+  if(cat)list=list.filter(r=>r.cat===cat);
+  if(busca)list=list.filter(r=>r.nome.toLowerCase().includes(busca));
+  document.getElementById('rmeta').textContent=`${list.length} receitas${recApr.length?` · ${recApr.length} via aprendizado`:''}`;
+  document.getElementById('rtbody').innerHTML=list.map(r=>{
+    var nome=r.n||r.nome||'';
+    var tier=r.t||r.tier||8;
+    var enc=r.enc||0;
+    var foco=r.foco||0;
+    var mats=r.mats||[];
+    var imgId=r.imgId||resolveImg(nome,tier);
+    var matsHtml=mats.map(function(m){
+      var mn=m.n||m.nome||'';
+      var mid=m.id||ITEM_IMG[mn]||null;
+      return '<span style="display:inline-flex;align-items:center;gap:3px;background:var(--deep);border:1px solid var(--border);border-radius:4px;padding:2px 5px;font-size:10px;color:var(--bright);margin:1px">'+
+        iimg(mid,14)+mn+'×'+(m.q||m.qtd||0)+'</span>';
+    }).join('');
+    return '<tr>'+
+      '<td>'+iimg(imgId,40)+'</td>'+
+      '<td><div style="font-size:12px;font-weight:600;color:var(--bright)">'+nome+'</div><div style="font-size:10px;color:var(--dim)">'+r.cat+'</div></td>'+
+      '<td>'+tb(tier,enc)+'</td>'+
+      '<td><div style="display:flex;flex-wrap:wrap;gap:2px;max-width:300px">'+matsHtml+'</div></td>'+
+      '<td class="num" style="color:var(--info)">'+(r.ret||15.2)+'%</td>'+
+      '<td class="num" style="color:var(--gold)">'+fmtF(foco)+'</td>'+
+      '</tr>';
+  }).join('');
+}
+
+// PRECOS
+function renderPrecos(){
+  const now=Date.now();
+  function tempoAgo(at){
+    if(!at)return'—';
+    const d=Math.floor((now-at)/1000);
+    const dt=new Date(at);
+    const hora=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const data=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    const label=data===hoje?hora:(data+' '+hora);
+    if(d<60)return d+'s atrás ('+label+')';
+    if(d<3600)return Math.floor(d/60)+'min atrás ('+label+')';
+    if(d<86400)return Math.floor(d/3600)+'h atrás ('+label+')';
+    return Math.floor(d/86400)+'d atrás ('+label+')';
+  }
+  function freshClass(at){
+    if(!at)return'var(--dim)';
+    const m=Math.floor((now-at)/60000);
+    if(m<15)return'var(--profit)';
+    if(m<60)return'var(--gold)';
+    if(m<180)return'var(--warn)';
+    return'var(--loss)';
+  }
+  function freshLabel(at){
+    if(!at)return'';
+    const m=Math.floor((now-at)/60000);
+    if(m<15)return'🟢';
+    if(m<60)return'🟡';
+    if(m<180)return'🟠';
+    return'🔴';
+  }
+  const list=Object.values(PM).filter((v,i,a)=>a.findIndex(x=>x.id===v.id)===i);
+  let fl=[...list];
+  const tipo=document.getElementById('ptipo').value;
+  const tier=document.getElementById('ptier').value;
+  if(tipo!=='')fl=fl.filter(p=>String(p.mat)===tipo);
+  if(tier)fl=fl.filter(p=>String(p.t)===tier);
+  fl.sort((a,b)=>b.med-a.med);
+  document.getElementById('precolist').innerHTML=fl.map(p=>{
+    const r=p.px-p.pm||1;const pp=v=>Math.round((v-p.pm)/r*100);
+    const ago=tempoAgo(p.at);
+    const fc=freshClass(p.at);
+    const fl2=freshLabel(p.at);
+    const nome=p.n||Object.keys(PM).find(k=>PM[k].id===p.id)||p.id;
+    return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:12px">
+      <img src="https://render.albiononline.com/v1/item/${p.id}.png?count=1&quality=1" style="width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--deep);border:1px solid var(--border);flex-shrink:0" loading="lazy" onerror="this.style.opacity=0.2" alt="${nome}"/>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+          <span style="font-size:13px;font-weight:600;color:var(--bright)">${nome}</span>
+          ${tb(p.t)}
+        </div>
+        <div style="font-size:9px;color:var(--dim);font-family:'JetBrains Mono';margin-bottom:8px">${p.id}</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          ${[['Mín.',p.pm,'var(--profit)',pp(p.pm)],['Médio',p.med,'var(--bright)',pp(p.med)],['Máx.',p.px,'var(--subtle)',100]].map(([l,v,c,w])=>`
+            <div style="display:flex;align-items:center;gap:7px;font-size:11px">
+              <span style="width:38px;color:var(--dim);font-size:10px">${l}</span>
+              <div style="flex:1;height:5px;background:var(--deep);border-radius:2px;overflow:hidden;max-width:200px"><div style="height:100%;border-radius:2px;background:${c};width:${w}%"></div></div>
+              <span style="color:${c};font-family:'Barlow Condensed';font-weight:600;min-width:60px">${fmt(v)}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;min-width:90px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:4px">Compra direta</div>
+        <div style="color:var(--warn);font-family:'Barlow Condensed';font-size:16px;font-weight:700">${fmt(p.pc)}</div>
+        <div style="font-size:9px;color:var(--dim);margin-top:2px">${p.mat?'Material':'Craftável'}</div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);margin-bottom:2px">Coletado</div>
+          <div style="display:flex;align-items:center;gap:4px;justify-content:flex-end">
+            <span style="font-size:12px">${fl2}</span>
+            <span style="font-size:11px;color:${fc};font-weight:600">${ago}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function populateCalc(){
+  const s=document.getElementById('crec');
+  [...todasReceitas(),...recApr].forEach(r=>{const o=document.createElement('option');o.value=r.id;o.textContent=`T${r.tier}${r.enc>0?'.'+r.enc:''} — ${r.nome}`;s.appendChild(o)});
+}
+function toggleCF(){calcFocoAtivo=!calcFocoAtivo;const b=document.getElementById('cfoco');b.classList.toggle('on',calcFocoAtivo);b.classList.toggle('off',!calcFocoAtivo);calcular()}
+function calcular(){
+  const all=[...todasReceitas(),...recApr];
+  const rec=all.find(r=>r.id===parseInt(document.getElementById('crec').value));
+  if(!rec)return;
+  const qtd=parseInt(document.getElementById('cqtd').value)||1;
+  const tm=parseFloat(document.getElementById('ctax').value)||3;
+  const te=parseFloat(document.getElementById('cest').value)||0;
+  const rp=calcFocoAtivo?rec.ret_f:rec.ret;
+  let custo=0,sp=false;
+  const md=rec.mats.map(m=>{const nome=m.n||m.nome;const q=(m.q||m.qtd)*qtd;const p=getP(nome);const pu=p?p.pm:0;if(!p)sp=true;custo+=pu*q;return{nome,q,pu,ct:pu*q,sem:!p}});
+  const ret=custo*(rp/100);const cef=custo-ret;const teV=cef*(te/100);
+  const pv=getP(rec.nome)?.pm||0;const rt=pv*qtd;const tmV=rt*(tm/100);
+  const lb=rt-cef-teV;const ll=lb-tmV;
+  const mg=rt>0?(ll/rt*100):0;const roi=cef>0?(ll/cef*100):0;
+  const ft=calcFocoAtivo?rec.foco*qtd:0;const lf=ft>0?ll/ft:0;const ok=ll>0;
+  document.getElementById('calcres').innerHTML=`<div>
+    <div class="dban ${ok?'dy':'dn'}">${ok?'✅ PRODUZIR':'❌ NÃO PRODUZIR'}</div>
+    ${sp||!pv?`<div style="background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);color:var(--warn);padding:8px 12px;border-radius:7px;font-size:11px;margin-bottom:10px">⚠️ ${!pv?'Preço de venda não cadastrado':'Alguns materiais sem preço'} — resultado estimado</div>`:''}
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+        ${[['Lucro Líquido',fmt(ll),ok?'var(--profit)':'var(--loss)',true],['ROI',pct(roi),roi>0?'var(--gold)':'var(--loss)',false],['Margem',pct(mg),mg>0?'var(--profit)':'var(--loss)',false],['Lucro/Foco',lf>0?fmt(lf):'—','var(--info)',false],['Custo Ef.',fmt(cef),'var(--bright)',false],['Preço Venda',fmt(pv),'var(--bright)',false]].map(([l,v,c,big])=>`
+          <div style="background:var(--deep);border:1px solid var(--border);border-radius:6px;padding:9px;text-align:center">
+            <div style="font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${l}</div>
+            <div style="font-size:${big?'18px':'13px'};font-weight:700;color:${c};font-family:'Barlow Condensed';font-variant-numeric:tabular-nums">${v}</div>
+          </div>`).join('')}
+      </div>
+      ${[['Custo Materiais',fmt(custo),'var(--bright)',false,false],[`↳ Retorno (${rp}%)`,'−'+fmt(ret),'var(--profit)',true,false],['Custo Efetivo',fmt(cef),'var(--white)',false,true],['Receita Total',fmt(rt),'var(--bright)',false,true],[`↳ Taxa Mercado (${tm}%)`,'−'+fmt(tmV),'var(--warn)',true,false],['Lucro Líquido',fmt(ll),ok?'var(--profit)':'var(--loss)',false,true]].map(([l,v,c,ind,sep])=>`<div class="br${sep?' sep':''}${ind?' ind':''}"><span class="lb">${l}</span><span style="color:${c};font-family:'Barlow Condensed';font-variant-numeric:tabular-nums">${v}</span></div>`).join('')}
+      ${ft>0?`<div class="br sep"><span class="lb">Foco Consumido</span><span class="gtx">${fmtF(ft)}</span></div>`:''}
+    </div>
+    <div class="card"><div style="font-size:10px;color:var(--subtle);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Materiais</div>
+    ${md.map(m=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(45,63,85,.3)">
+      <div style="display:flex;align-items:center;gap:9px">${iimg(m.imgId||ITEM_IMG[m.nome||m.n]||resolveImg(m.nome||m.n,m.t),30)}${m.sem?'<span style="color:var(--warn);font-size:11px">⚠</span>':''}<span style="font-size:12px;color:var(--bright)">${m.nome}</span><span style="font-size:11px;color:var(--dim)">×${m.q.toLocaleString('pt-BR')}</span></div>
+      <div style="text-align:right"><div style="font-size:10px;color:var(--dim)">${fmt(m.pu)}/un</div><div class="num" style="color:var(--bright)">${fmt(m.ct)}</div></div>
+    </div>`).join('')}</div></div>`;
+}
+
+// SCANNER
+function populateScanFilters(){
+  const s=document.getElementById('scat');
+  [...new Set(RESULTADOS.map(r=>r.cat))].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;s.appendChild(o)});
+}
+function setSort(k){sortKey=k;['ss0','ss1','ss2','ss3'].forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('act')});const m={ll:'ss0',roi:'ss1',margem:'ss2',lpf:'ss3'};if(m[k]){const e=document.getElementById(m[k]);if(e)e.classList.add('act')}renderScan()}
+function renderScan(){
+  const all=[...RESULTADOS,...recApr.map(r=>r._res).filter(Boolean)];
+  let list=[...all];
+  const tier=document.getElementById('stier').value;
+  const cat=document.getElementById('scat').value;
+  const luc=document.getElementById('sluc').value;
+  if(tier)list=list.filter(r=>String(r.tier)===tier);
+  if(cat)list=list.filter(r=>r.cat===cat);
+  if(luc!=='')list=list.filter(r=>String(r.ok)===luc);
+  list.sort((a,b)=>b[sortKey]-a[sortKey]);
+  document.getElementById('scanmeta').textContent=`${list.length} itens analisados · Caerleon`;
+  document.getElementById('stbody').innerHTML=list.map((r,i)=>`<tr>
+    <td class="num" style="color:var(--dim)">#${i+1}</td><td>${tb(r.tier,r.enc||0)}</td>
+    <td><div style="font-weight:500;color:var(--bright)">${r.nome}</div><div style="font-size:10px;color:var(--dim)">${r.cat}</div></td>
+    <td style="font-size:11px;color:var(--subtle)">${r.cat}</td>
+    <td class="${pcls(r.ce)}">${fmt(r.ce)}</td>
+    <td class="num" style="color:var(--bright)">${fmt(r.pv)}</td>
+    <td class="${pcls(r.ll)}" style="font-weight:700">${fmt(r.ll)}</td>
+    <td class="${pcls(r.mg)}">${pct(r.mg)}</td>
+    <td class="gtx" style="font-weight:700">${pct(r.roi)}</td>
+    <td class="dtx">${r.lpf?pct(r.lpf):'—'}</td>
+    <td><span class="${r.ok?'bpr':'bna'}">${r.ok?'PRODUZIR':'NÃO'}</span></td>
+  </tr>`).join('');
+}
+let scT=null;
+function runScan(){const b=document.getElementById('scnbtn');const tot=RESULTADOS.length+recApr.length;let i=0;b.disabled=true;b.textContent='⏳ 0/'+tot;scT=setInterval(()=>{i++;b.textContent=`⏳ ${i}/${tot}`;if(i>=tot){clearInterval(scT);b.disabled=false;b.textContent='✅ Feito';setTimeout(()=>b.textContent='▶ Scan',2000)}},200)}
+
+// ENCANTAMENTOS
+function populateEnc(){
+  // Tabela estática — apenas inicializar estado
+  encBaseId=null; encEncId=null;
+}
+
+// Estado dos selects de encantamento
+let encBaseId=null, encEncId=null, encAcIdx={base:-1,enc:-1};
+
+function encGetAll(){
+  return [...todasReceitas(),...recApr];
+}
+
+function encFiltrar(){
+  // Limpar seleções ao mudar filtro
+  encBaseId=null; encEncId=null;
+  const bd=document.getElementById('enc-sel-base');
+  const ed=document.getElementById('enc-sel-enc');
+  if(bd){bd.style.display='none';document.getElementById('enc-sel-base-nome').textContent='';}
+  if(ed){ed.style.display='none';document.getElementById('enc-sel-enc-nome').textContent='';}
+  document.getElementById('enc-busca-base').value='';
+  document.getElementById('enc-busca-enc').value='';
+  encHide('base'); encHide('enc');
+}
+
+function encGetFiltros(){
+  return {
+    tier: document.getElementById('enc-f-tier')?.value||'',
+    cat:  document.getElementById('enc-f-cat')?.value||'',
+    enc:  document.getElementById('enc-f-enc')?.value||'',
+  };
+}
+
+function encSearch(tipo, val){
+  const listEl = document.getElementById('enc-ac-'+tipo);
+  if(!val||val.length<1){listEl.classList.remove('show');return;}
+  const v=val.toLowerCase();
+  const {tier,cat,enc:encFilt}=encGetFiltros();
+  const isBase = tipo==='base';
+  let pool = encGetAll().filter(r=>{
+    if(isBase && (r.enc||0)!==0) return false;
+    if(!isBase && (r.enc||0)===0) return false;
+    if(!isBase && encFilt && String(r.enc||0)!==encFilt) return false;
+    if(tier && String(r.t||r.tier||8)!==tier) return false;
+    if(cat && r.cat!==cat) return false;
+    const nome=r.nome||r.n||'';
+    return nome.toLowerCase().includes(v);
+  }).slice(0,12);
+
+  if(!pool.length){listEl.classList.remove('show');return;}
+  listEl.innerHTML=pool.map((r,i)=>{
+    const nome=r.nome||r.n||'';
+    const t=r.t||r.tier||8;
+    const enc=r.enc||0;
+    const imgId=r.imgId||resolveImg(nome,t);
+    const label = enc>0 ? `T${t}.${enc} — ${nome}` : `T${t} — ${nome}`;
+    return `<div class="aci" id="encaci-${tipo}-${i}"
+      onclick="encSelect('${tipo}',${r.id},'${label.replace(/'/g,"\'")}','${imgId||''}')"
+      onmousedown="event.preventDefault()">
+      ${iimg(imgId,24)}
+      <span class="acn">${label}</span>
+      <span class="tc t${t}">${enc>0?`T${t}.${enc}`:`T${t}`}</span>
+      <span style="font-size:10px;color:var(--dim)">${r.cat}</span>
+    </div>`;
+  }).join('');
+  listEl.classList.add('show');
+  (tipo==='base'?encAcIdx.base=encAcIdx.enc=-1:null);
+}
+
+function encSelect(tipo, id, label, imgId){
+  const all=encGetAll();
+  const r=all.find(x=>x.id===id);
+  if(!r)return;
+  if(tipo==='base') encBaseId=id;
+  else encEncId=id;
+
+  const nome=r.nome||r.n||'';
+  const t=r.t||r.tier||8;
+  const enc=r.enc||0;
+
+  // Atualizar display
+  const inpEl=document.getElementById('enc-busca-'+tipo);
+  const selEl=document.getElementById('enc-sel-'+tipo);
+  const nomeEl=document.getElementById('enc-sel-'+tipo+'-nome');
+  const imgEl=document.getElementById('enc-sel-'+tipo+'-img');
+  if(inpEl){inpEl.value='';inpEl.style.display='none';}
+  if(nomeEl) nomeEl.textContent=`T${t}${enc>0?'.'+enc:''} — ${nome}`;
+  if(imgEl)  imgEl.innerHTML=iimg(imgId||resolveImg(nome,t),28);
+  if(selEl)  selEl.style.display='flex';
+  encHide(tipo);
+
+  // Sincronizar tipo de encantamento automaticamente
+  if(tipo==='enc' && enc>0){
+    const tipoEl=document.getElementById('enc-tipo');
+    if(tipoEl) tipoEl.value=enc===1?'runa':enc===2?'alma':'reliquia';
+  }
+
+  // Calcular se ambos selecionados
+  if(encBaseId && encEncId) calcEnc();
+}
+
+function encClear(tipo){
+  if(tipo==='base') encBaseId=null;
+  else encEncId=null;
+  const inpEl=document.getElementById('enc-busca-'+tipo);
+  const selEl=document.getElementById('enc-sel-'+tipo);
+  if(inpEl){inpEl.value='';inpEl.style.display='';}
+  if(selEl) selEl.style.display='none';
+  document.getElementById('encres').innerHTML=`<div class="card" style="height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;opacity:.45;min-height:280px"><div style="font-size:36px">✨</div><div style="color:var(--subtle);font-size:13px">Busque e selecione os dois itens</div></div>`;
+}
+
+function encHide(tipo){
+  const l=document.getElementById('enc-ac-'+tipo);
+  if(l) l.classList.remove('show');
+}
+
+function encKey(e,tipo){
+  const list=document.getElementById('enc-ac-'+tipo);
+  const items=list.querySelectorAll('.aci');
+  if(!items.length) return;
+  let idx=tipo==='base'?encAcIdx.base:encAcIdx.enc;
+  if(e.key==='ArrowDown'){e.preventDefault();idx=Math.min(idx+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();idx=Math.max(idx-1,0);}
+  else if(e.key==='Enter'&&idx>=0){e.preventDefault();items[idx].click();return;}
+  else if(e.key==='Escape'){encHide(tipo);return;}
+  if(tipo==='base') encAcIdx.base=idx; else encAcIdx.enc=idx;
+  items.forEach((x,j)=>x.classList.toggle('sel',j===idx));
+}
+function calcEnc(){
+  const bid=encBaseId;const eid=encEncId;
+  if(!bid||!eid){
+    const qtdInfoEl=document.getElementById('enc-qtd-info');
+    if(qtdInfoEl)qtdInfoEl.innerHTML='Selecione os itens acima para calcular.';
+    return;
+  }
+  const br=RESULTADOS.find(r=>r.rid===bid)||{ce:0,ll:0,roi:0,pv:0};
+  const er=RESULTADOS.find(r=>r.rid===eid)||{ce:0,ll:0,roi:0,pv:0};
+  // Detectar tipo do item encantado para usar quantidade correta
+  const allRecs=todasReceitas();
+  const recEnc=allRecs.find(r=>r.id===eid)||{cat:'Armas',mao:'1H'};
+  const cat2=recEnc.cat||'Armas';
+  const mao2=recEnc.mao||'1H';
+  const qtdEncCalc=getEncQtd(cat2,mao2);
+  // Atualizar info box
+  const infoEl=document.getElementById('enc-qtd-info');
+  if(infoEl){
+    const tipoLabel=cat2==='Capacetes'||cat2==='Botas'?'Elmo/Bota':cat2==='Armaduras'?'Peito (Armadura)':mao2==='2H'?'Arma de 2 Mãos':'Arma de 1 Mão';
+    infoEl.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between">
+      <span>${tipoLabel}</span>
+      <span style="font-family:'Barlow Condensed';font-size:16px;font-weight:700;color:var(--gold)">${qtdEncCalc.toLocaleString('pt-BR')} unidades</span>
+    </div>`;
+  }
+  // Tipo de encantamento selecionado (padrão: Runa)
+  const encTipo=document.getElementById('enc-tipo')?.value||'runa';
+  const encNome=encTipo==='runa'?'Runa (Ancião)':encTipo==='alma'?'Alma (Ancião)':'Relíquia (Ancião)';
+  const encKey=encTipo==='runa'?'t8_rune':encTipo==='alma'?'t8_soul':'t8_relic';
+  const encP=PM[encKey]?.pm||(encTipo==='runa'?3500:encTipo==='alma'?8000:15000);
+  const custEnc=qtdEncCalc*encP;
+  const rBt=br.ce+custEnc;const rBtax=(er.pv||0)*0.03;
+  const rBl=(er.pv||0)-rBt-rBtax;const rBr=rBt>0?(rBl/rBt*100):0;
+  const melhor=rBt<er.ce?'B':'A';const eco=Math.abs(er.ce-rBt);const ecoP=er.ce>0?(eco/er.ce*100):0;
+  document.getElementById('encres').innerHTML=`<div>
+    <div style="background:${melhor==='B'?'var(--pb)':'var(--gb)'};border:1px solid ${melhor==='B'?'var(--pbr)':'var(--gbr)'};border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">
+      <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:${melhor==='B'?'var(--profit)':'var(--gold)'}">🏆 Rota ${melhor} é Melhor</div>
+      <div style="font-size:12px;color:var(--subtle);margin-top:4px">Economia de <strong>${fmt(eco)}</strong> · <strong>${pct(ecoP)}</strong> mais barato</div>
+    </div>
+    <div class="g2" style="gap:10px">
+      ${[{l:'Rota A — Craft Direto',c:er.ce,ll:er.ll,r:er.roi,best:melhor==='A',ex:''},
+         {l:'Rota B — Base + Encantar',c:rBt,ll:rBl,r:rBr,best:melhor==='B',ex:`<div class='br ind'><span class='lb'>↳ ${encNome} ×${qtdEncCalc.toLocaleString('pt-BR')}</span><span style='color:var(--warn);font-family:Barlow Condensed'>${fmt(custEnc)}</span></div>`}].map(x=>`
+        <div class="card" style="${x.best?'border-color:var(--pbr)':''}">
+          <div style="font-size:10px;font-weight:600;color:${x.best?'var(--profit)':'var(--subtle)'};text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">${x.best?'★ ':''}${x.l}</div>
+          <div class="br"><span class="lb">Custo Total</span><span class="num" style="color:var(--bright)">${fmt(x.c)}</span></div>${x.ex}
+          <div class="br sep"><span class="lb">Lucro</span><span style="color:${x.ll>0?'var(--profit)':'var(--loss)'};font-family:'Barlow Condensed';font-weight:700">${fmt(x.ll)}</span></div>
+          <div class="br"><span class="lb">ROI</span><span class="gtx">${pct(x.r)}</span></div>
+        </div>`).join('')}
+    </div></div>`;
+}
+
+// MERCADO
+function renderMercado(){
+  [{i:'💡',t:'Espada Longa T7 tem o maior ROI (169%) — ideal para iniciantes com menos foco.'},{i:'📊',t:'Armaduras representam ~47% do lucro total potencial da carteira.'},{i:'⚠️',t:'Bolsas estão com prejuízo em ambos os tiers — evite até os preços subirem.'},{i:'🧠',t:`O sistema conhece ${MATS.length} materiais: barras T2–T8, couros, panos, madeiras, pedras, runas, almas, relíquias e artefatos por categoria.`}].forEach(x=>{
+    const d=document.createElement('div');d.style.cssText='background:var(--deep);border:1px solid rgba(255,193,7,.12);border-radius:8px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px';
+    d.innerHTML=`<span style="font-size:17px;flex-shrink:0">${x.i}</span><span style="font-size:12px;color:var(--bright)">${x.t}</span>`;
+    document.getElementById('insights').appendChild(d);
+  });
+  const cats={};RESULTADOS.filter(r=>r.ok).forEach(r=>{if(!cats[r.cat])cats[r.cat]={t:0,roi:[]};cats[r.cat].t+=r.ll;cats[r.cat].roi.push(r.roi)});
+  const sc=Object.entries(cats).sort((a,b)=>b[1].t-a[1].t);const mx=sc[0]?.[1].t||1;
+  const cc={Armas:'#FFC107',Armaduras:'#00E5A0',Botas:'#38BDF8',Capacetes:'#FF4D6B'};
+  document.getElementById('roichart').innerHTML=sc.map(([c,d])=>{const ar=d.roi.reduce((s,v)=>s+v,0)/d.roi.length;return`<div class="cbar"><div class="cbl">${c}</div><div class="cbbg"><div class="cbf" style="width:${Math.round(d.t/mx*100)}%;background:${cc[c]||'#6B8BAF'}"><span class="cbv">${pct(ar,0)} ROI</span></div></div></div>`}).join('');
+  document.getElementById('ranklist').innerHTML=RESULTADOS.filter(r=>r.ok).map((r,i)=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(45,63,85,.3)"><span style="font-size:11px;color:var(--dim);width:14px">#${i+1}</span>${iimg(r.imgId||resolveImg(r.nome||r.n||"",r.t||r.tier||8),26)}${tb(r.tier,r.enc||0)}<span style="flex:1;font-size:12px;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.nome}</span><div style="text-align:right"><div class="ptx" style="font-size:13px">${fmt(r.ll)}</div><div class="gtx" style="font-size:10px">${pct(r.roi)}</div></div></div>`).join('');
+}
+
+// ALERTAS
+function renderAlertas(){
+  document.getElementById('almeta').textContent=`${alertas.filter(a=>a.ativo).length} ativos de ${alertas.length}`;
+  const tipos={item_lucrativo:'Item ficou lucrativo',roi_acima:'ROI acima de',margem_abaixo:'Margem abaixo de',preco_abaixo:'Preço abaixo de'};
+  document.getElementById('allist').innerHTML=alertas.map((a,i)=>`<div class="alr"><div class="ald ${a.ativo?'on':'off'}"></div><div style="flex:1"><div style="font-size:12px;font-weight:500;color:var(--bright)">${a.nome}</div><div style="font-size:10px;color:var(--dim)">${tipos[a.tipo]||a.tipo}${a.val?' '+fmtF(a.val):''}</div></div><button class="tsw ${a.ativo?'on':'off'}" onclick="alertas[${i}].ativo=!alertas[${i}].ativo;renderAlertas()" aria-label="Toggle"></button><button onclick="alertas.splice(${i},1);renderAlertas()" style="background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;padding:2px 6px">🗑</button></div>`).join('')+`<div style="background:var(--gb);border:1px solid var(--gbr);border-radius:8px;padding:12px;margin-top:10px"><div style="font-size:10px;color:var(--gold);font-weight:600;margin-bottom:4px">💡 Alerta Disparado</div><div style="font-size:12px;color:var(--bright)">"Espada Longa T7" atingiu ROI de 169% — acima do limite</div><div style="font-size:10px;color:var(--dim);margin-top:4px">há 3 min · Caerleon</div></div>`;
+}
+function addAl(){document.getElementById('alform').style.display='block'}
+function cancelAl(){document.getElementById('alform').style.display='none'}
+function saveAl(){const n=document.getElementById('aln').value;const t=document.getElementById('alt').value;const v=parseFloat(document.getElementById('alv').value)||0;if(!n)return alert('Informe o nome');alertas.push({id:Date.now(),nome:n,tipo:t,val:v,ativo:true});cancelAl();renderAlertas()}
+
+// BASE MATERIAIS
+function renderMats(){
+  let list=[...MATS];
+  const tipo=document.getElementById('mttipo').value;
+  const tier=document.getElementById('mttier').value;
+  const busca=document.getElementById('mtbusca').value.toLowerCase();
+  if(tipo)list=list.filter(m=>m.tp===tipo);
+  if(tier)list=list.filter(m=>String(m.t)===tier);
+  if(busca)list=list.filter(m=>m.n.toLowerCase().includes(busca)||m.id.toLowerCase().includes(busca));
+  document.getElementById('mtcnt').textContent=`${list.length} de ${MATS.length}`;
+  document.getElementById('matgrid').innerHTML=list.map(m=>`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:5px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='var(--muted)'" onmouseout="this.style.borderColor='var(--border)'">
+      ${iimg(m.id,44)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;color:var(--bright)">${m.n}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          ${tb(m.t)}
+          <span class="ttag ${tipoCls(m.tp)}">${m.tp}</span>
+          ${m.enc?`<span style="font-size:10px;color:var(--dim)">→ encantamento .${m.enc}</span>`:''}
+          ${m.cat?`<span style="font-size:10px;color:var(--dim)">${m.cat}</span>`:''}
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:9px;font-family:'JetBrains Mono';color:var(--dim)">${m.id}</div>
+        ${ENC_QTD[m.t]&&(m.tp==='runa'||m.tp==='alma'||m.tp==='reliquia')?`<div style="font-size:10px;color:var(--gold);margin-top:2px">×${ENC_QTD[m.t][m.tp]} p/ enc</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// APRENDIZADO
+function doDO(e){e.preventDefault();document.getElementById('dz').classList.add('ov')}
+function doDL(e){document.getElementById('dz').classList.remove('ov')}
+function doDD(e){e.preventDefault();document.getElementById('dz').classList.remove('ov');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))loadImg(f)}
+function doFI(e){const f=e.target.files[0];if(f)loadImg(f)}
+function loadImg(f){imgFile=f;const r=new FileReader();r.onload=ev=>{imgB64=ev.target.result;document.getElementById('pimg').src=imgB64;document.getElementById('iprev').style.display='block';document.getElementById('dz').style.display='none';document.getElementById('tipsarea').style.display='none';showIdle()};r.readAsDataURL(f)}
+function clearImg(){imgB64=null;imgFile=null;document.getElementById('iprev').style.display='none';document.getElementById('dz').style.display='block';document.getElementById('fi').value='';document.getElementById('tipsarea').style.display='block';document.getElementById('lidle').style.display='flex';document.getElementById('lproc').style.display='none';document.getElementById('lrev').style.display='none'}
+function showIdle(){document.getElementById('lidle').style.display='flex';document.getElementById('lproc').style.display='none';document.getElementById('lrev').style.display='none'}
+
+async function procImg(){
+  if(!imgB64){alert('Selecione uma imagem primeiro.');return}
+  document.getElementById('bproc').disabled=true;
+  document.getElementById('lidle').style.display='none';document.getElementById('lrev').style.display='none';document.getElementById('lproc').style.display='block';
+  const steps=['Detectando itens na imagem...','Lendo nome do item...','Identificando materiais...','Reconhecendo quantidades...','Cruzando com banco de '+MATS.length+' materiais...','Finalizando análise...'];
+  let si=0;const se=document.getElementById('pstep');
+  const st=setInterval(()=>{if(si<steps.length)se.textContent=steps[si++]},450);
+  try{
+    let res=null;
+    if(apiAnt||apiOai)res=await procIA();
+    if(!res){await new Promise(r=>setTimeout(r,steps.length*450+300));res=procManual()}
+    clearInterval(st);showRev(res);
+  }catch(err){clearInterval(st);alert('Erro: '+err.message);showIdle()}
+  finally{document.getElementById('bproc').disabled=false}
+}
+
+async function procIA(){
+  const b64=imgB64.split(',')[1];const mt=imgFile?.type||'image/jpeg';
+  const matNames=MATS.map(m=>m.n).join(', ');
+  const prompt=`Analise esta screenshot do jogo Albion Online — janela de crafting.
+Retorne SOMENTE um JSON válido:
+{"nome":"nome do item","tier":8,"encantamento":0,"categoria":"Armaduras","foco_custo":30000,"materiais":[{"nome":"nome EXATO do material","quantidade":32,"tier":8}],"confianca":90}
+Materiais disponíveis: ${matNames}
+Use nomes EXATOS da lista. Categorias: Armas, Armaduras, Capacetes, Botas, Capas, Bolsas, Ferramentas, Consumíveis.`;
+  if(apiAnt){
+    const rp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiAnt,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-opus-4-6',max_tokens:1024,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:b64}},{type:'text',text:prompt}]}]})});
+    if(rp.ok){const d=await rp.json();const t=d.content.find(b=>b.type==='text')?.text||'';return JSON.parse(t.replace(/```json|```/g,'').trim())}
+  }
+  if(apiOai){
+    const rp=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiOai},body:JSON.stringify({model:'gpt-4o',max_tokens:1024,messages:[{role:'user',content:[{type:'image_url',image_url:{url:imgB64}},{type:'text',text:prompt}]}]})});
+    if(rp.ok){const d=await rp.json();const t=d.choices[0]?.message?.content||'';return JSON.parse(t.replace(/```json|```/g,'').trim())}
+  }
+  return null;
+}
+function procManual(){return{nome:'',tier:8,encantamento:0,categoria:'',foco_custo:0,materiais:[{nome:'',quantidade:1,tier:8}],confianca:0,msg:'Configure uma API Key em ⚙️ Configurações para leitura automática. Preencha os campos abaixo com base no print.'}}
+
+function showRev(d){
+  document.getElementById('lproc').style.display='none';document.getElementById('lidle').style.display='none';document.getElementById('lrev').style.display='block';
+  const conf=d.confianca||0;const cc=conf>=80?'var(--profit)':conf>=50?'var(--warn)':'var(--loss)';
+  const sb=document.getElementById('ocrst');
+  if(conf===0){sb.className='ocrs rev';document.getElementById('ocric').textContent='✏️';document.getElementById('ocrtit').textContent='Preencha manualmente'}
+  else if(conf>=80){sb.className='ocrs ok';document.getElementById('ocric').textContent='✅';document.getElementById('ocrtit').textContent='Leitura com alta confiança'}
+  else{sb.className='ocrs rev';document.getElementById('ocric').textContent='⚠️';document.getElementById('ocrtit').textContent='Revisão recomendada'}
+  document.getElementById('confv').textContent=conf>0?pct(conf,0):'—';document.getElementById('confv').style.color=conf>0?cc:'var(--dim)';
+  document.getElementById('confbar').style.width=conf+'%';document.getElementById('confbar').style.background=cc;
+  document.getElementById('rvnome').value=d.nome||'';document.getElementById('rvtier').value=d.tier||8;document.getElementById('rvenc').value=d.encantamento||0;document.getElementById('rvfoco').value=d.foco_custo||0;
+  if(d.categoria)document.getElementById('rvcat').value=d.categoria;
+  if(d.msg){const dv=document.createElement('div');dv.style.cssText='background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);color:var(--info);border-radius:7px;padding:10px 12px;font-size:11px;margin-bottom:10px';dv.textContent='ℹ️ '+d.msg;const lrev=document.getElementById('lrev');lrev.insertBefore(dv,lrev.children[1])}
+  matsRev=d.materiais?.length?d.materiais.map(m=>({nome:m.nome,qtd:m.quantidade,tier:m.tier||8})):[{nome:'',qtd:1,tier:8}];
+  renderMatsRev();
+}
+
+// AUTOCOMPLETE DE MATERIAIS
+function renderMatsRev(){
+  document.getElementById('matslist').innerHTML=matsRev.map((m,i)=>`
+    <div class="mr" id="mr${i}">
+      <span style="font-size:11px;color:var(--dim);width:16px;text-align:right;flex-shrink:0">${i+1}</span>
+      <div class="acw" style="flex:1;min-width:0">
+        <input class="mnn" type="text" placeholder="Digite o nome do material..." value="${m.nome||''}"
+          oninput="matsRev[${i}].nome=this.value;showAC(${i},this.value)"
+          onkeydown="acKey(event,${i})"
+          onblur="setTimeout(()=>hideAC(${i}),200)"
+          autocomplete="off" id="mi${i}">
+        <div class="acl" id="ac${i}"></div>
+      </div>
+      <input class="mq" type="number" min="1" value="${m.qtd||1}" oninput="matsRev[${i}].qtd=parseInt(this.value)||1">
+      <select class="mts" onchange="matsRev[${i}].tier=parseInt(this.value)">
+        ${[2,3,4,5,6,7,8].map(t=>`<option value="${t}"${m.tier===t?' selected':''}>${t}</option>`).join('')}
+      </select>
+      <button class="rmb" onclick="removeMat(${i})">✕</button>
+    </div>`).join('');
+}
+
+function showAC(i,val){
+  const list=document.getElementById('ac'+i);
+  if(!val||val.length<2){list.classList.remove('show');return}
+  const v=val.toLowerCase();
+  const matches=MATS.filter(m=>m.n.toLowerCase().includes(v)||m.id.toLowerCase().includes(v)).slice(0,10);
+  if(!matches.length){list.classList.remove('show');return}
+  list.innerHTML=matches.map((m,idx)=>`
+    <div class="aci" id="aci${i}_${idx}" onclick="selectAC(${i},'${m.n.replace(/'/g,"\'")}',${m.t})">
+      ${iimg(m.id,22)}<span class="acn">${m.n}</span>
+      <span class="ttag ${tipoCls(m.tp)}" style="margin:0">${m.tp}</span>
+      ${tb(m.t)}
+    </div>`).join('');
+  list.classList.add('show');acIdx=-1;
+}
+
+function hideAC(i){const l=document.getElementById('ac'+i);if(l)l.classList.remove('show');acIdx=-1}
+
+function selectAC(i,nome,tier){
+  matsRev[i].nome=nome;matsRev[i].tier=tier;
+  const inp=document.getElementById('mi'+i);if(inp)inp.value=nome;
+  const sel=document.querySelector(`#mr${i} .mts`);if(sel)sel.value=tier;
+  hideAC(i);
+}
+
+function acKey(e,i){
+  const list=document.getElementById('ac'+i);
+  const items=list.querySelectorAll('.aci');if(!items.length)return;
+  if(e.key==='ArrowDown'){e.preventDefault();acIdx=Math.min(acIdx+1,items.length-1);items.forEach((x,j)=>x.classList.toggle('sel',j===acIdx))}
+  else if(e.key==='ArrowUp'){e.preventDefault();acIdx=Math.max(acIdx-1,0);items.forEach((x,j)=>x.classList.toggle('sel',j===acIdx))}
+  else if(e.key==='Enter'&&acIdx>=0){e.preventDefault();items[acIdx].click()}
+  else if(e.key==='Escape')hideAC(i);
+}
+
+function addMat(){matsRev.push({nome:'',qtd:1,tier:8});renderMatsRev();setTimeout(()=>{const inps=document.querySelectorAll('.mr .mnn');if(inps.length)inps[inps.length-1].focus()},50)}
+function removeMat(i){if(matsRev.length===1){alert('Deve ter ao menos 1 material.');return}matsRev.splice(i,1);renderMatsRev()}
+
+function saveRec(){
+  const nome=document.getElementById('rvnome').value.trim();
+  if(!nome){alert('Informe o nome do item.');document.getElementById('rvnome').focus();return}
+  const mv=matsRev.filter(m=>m.nome.trim()&&m.qtd>0);
+  if(!mv.length){alert('Adicione ao menos 1 material.');return}
+  const tier=parseInt(document.getElementById('rvtier').value)||8;
+  const enc=parseInt(document.getElementById('rvenc').value)||0;
+  const cat=document.getElementById('rvcat').value||'Outros';
+  const foco=parseInt(document.getElementById('rvfoco').value)||0;
+  const ret=parseFloat(document.getElementById('rvret')?.value)||15.2;
+  const id=nextId++;
+  const nr={id,nome,tier,enc,cat,foco,ret,ret_f:47.9,taxa_m:3,origem:'aprendizado',mats:mv.map(m=>({n:m.nome.trim(),q:m.qtd,t:m.tier||tier}))};
+  nr._res=calcRes(nr);
+  recApr.push(nr);
+  const s=document.getElementById('crec');const o=document.createElement('option');o.value=id;o.textContent=`T${tier}${enc>0?'.'+enc:''} — ${nome}`;s.appendChild(o);
+  document.getElementById('learnhist').style.display='block';
+  document.getElementById('histlist').innerHTML=recApr.map(r=>`<div class="lhr2">${tb(r.tier,r.enc)}<div style="flex:1;min-width:0"><div style="font-size:12px;color:var(--bright)">${r.nome}</div><div style="font-size:10px;color:var(--dim)">${r.mats.length} materiais · ${r.cat}</div></div><span class="sbb">✅ Salva</span></div>`).join('');
+  const b=document.querySelector('[onclick="saveRec()"]');const orig=b.innerHTML;
+  b.innerHTML='✅ Salvo!';b.style.background='var(--profit)';b.style.color='var(--void)';
+  setTimeout(()=>{b.innerHTML=orig;b.style.background='';b.style.color='';renderDash();renderRec();renderScan()},1800);
+  setTimeout(()=>{clearImg();document.getElementById('rvnome').value='';if(document.getElementById('rvnotas'))document.getElementById('rvnotas').value='';matsRev=[{nome:'',qtd:1,tier:8}]},2100);
+}
+function calcRes(r){
+  let custo=0;r.mats.forEach(m=>{const p=getP(m.n||m.nome);custo+=(p?p.pm:0)*(m.q||m.qtd)});
+  const ret=custo*(r.ret/100);const cef=custo-ret;
+  const pv=getP(r.nome)?.pm||0;const tv=pv*(r.taxa_m/100);
+  const ll=pv-cef-tv;const mg=pv>0?(ll/pv*100):0;const roi=cef>0?(ll/cef*100):0;const lpf=r.foco>0?ll/r.foco:0;
+  return{rid:r.id,nome:r.nome,tier:r.tier,enc:r.enc,cat:r.cat,ce:Math.round(cef),pv,ll:Math.round(ll),mg:+mg.toFixed(2),roi:+roi.toFixed(2),lpf:+lpf.toFixed(2),ok:ll>0?1:0};
+}
+function descarte(){if(confirm('Descartar esta leitura?'))clearImg()}
+
+// CONFIG
+function renderConfig(){
+  document.getElementById('cfglist').innerHTML=[['Taxa de Mercado','3.0%','Padrão na venda'],['Retorno Sem Foco','15.2%','% materiais retornados'],['Retorno Com Foco','47.9%','% com foco'],['Materiais Conhecidos',MATS.length,'No banco interno']].map(([k,v,d])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(45,63,85,.4)"><div><div style="font-size:12px;color:var(--bright)">${k}</div><div style="font-size:10px;color:var(--dim)">${d}</div></div><div class="num" style="color:var(--gold);font-size:12px">${v}</div></div>`).join('');
+  document.getElementById('dbstats').innerHTML=[['Receitas',RECEITAS.length+recApr.length],['Via Aprendizado',recApr.length],['Preços cadastrados',Object.keys(PM).length],['Materiais no banco',MATS.length]].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:5px 0"><span style="font-size:11px;font-family:monospace;color:var(--dim)">${k}</span><span class="num" style="color:var(--bright)">${v}</span></div>`).join('')+`<div style="display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"><div class="pulse"></div><span style="font-size:11px;color:var(--profit)">Online</span></div>`;
+}
+function saveKeys(){apiAnt=document.getElementById('cfgant').value;apiOai=document.getElementById('cfgoai').value;alert('Chaves salvas! ✅')}
+
+// EXPORT
+function exportCSV(){
+  const all=[...RESULTADOS,...recApr.map(r=>r._res).filter(Boolean)];
+  const h='item,tier,encantamento,categoria,custo,preco_venda,lucro_liquido,margem_pct,roi_pct,lucro_por_foco,lucrativo';
+  const rows=all.map(r=>`"${r.nome}",${r.tier},${r.enc||0},"${r.cat}",${r.ce||0},${r.pv||0},${r.ll},${(r.mg||0).toFixed(2)},${(r.roi||0).toFixed(2)},${(r.lpf||0).toFixed(2)},${r.ok}`);
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+[h,...rows].join('\r\n'));a.download='albion-scanner.csv';a.click();
+}
+
+// INIT
+
+// ═══════════════════════════════════════════════════════════════
+// RE-GEAR — Lógica completa
+// ═══════════════════════════════════════════════════════════════
+
+// Preços padrão dos encantamentos por tier (editável na UI)
+const RG_ENC_DEFAULT = {
+  T4_RUNE:320,  T5_RUNE:900,  T6_RUNE:1350, T7_RUNE:3500,  T8_RUNE:8500,
+  T4_SOUL:750,  T5_SOUL:2200, T6_SOUL:5500, T7_SOUL:12000, T8_SOUL:25000,
+  T4_RELIC:1400,T5_RELIC:4200,T6_RELIC:9000,T7_RELIC:22000,T8_RELIC:55000,
+};
+let rgEncPrecos = {...RG_ENC_DEFAULT};
+let rgResultados = [];
+
+function rgInit(){
+  const container = document.getElementById('rg-enc-precos');
+  if(!container) return;
+  const tiers = [4,5,6,7,8];
+  const tipos = [
+    {key:'RUNE', label:'🟢 Runa', cor:'#4CAF50'},
+    {key:'SOUL', label:'🔵 Alma', cor:'#2196F3'},
+    {key:'RELIC', label:'🟣 Relíquia', cor:'#9C27B0'},
+  ];
+  container.innerHTML = tiers.map(t => `
+    <div style="margin-bottom:10px">
+      <div style="font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">
+        <span class="tc t${t}">T${t}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+        ${tipos.map(tp => `
+          <div>
+            <div style="font-size:10px;color:${tp.cor};margin-bottom:3px">${tp.label}</div>
+            <input type="number" id="rg-p-${tp.key}-${t}" value="${RG_ENC_DEFAULT['T'+t+'_'+tp.key]}"
+              min="0" step="100" oninput="rgUpdatePreco('${tp.key}',${t},this.value)"
+              style="width:100%;background:var(--raised);border:1px solid var(--border);color:var(--bright);border-radius:5px;padding:4px 7px;font-size:11px;font-family:inherit;outline:none;font-variant-numeric:tabular-nums">
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function rgUpdatePreco(tipo, tier, val){
+  rgEncPrecos['T'+tier+'_'+tipo] = parseInt(val)||0;
+}
+
+// Parseia "Robe do Mago T6.2" → {base:"Robe do Mago", tier:6, enc:2}
+function rgParseItem(linha){
+  linha = linha.trim();
+  if(!linha) return null;
+  // Tentar capturar padrão "T6.2" ou "T6" no final
+  const m = linha.match(/^(.+?)\s+T(\d+)(?:\.(\d+))?$/i);
+  if(!m) return {base:linha, tier:6, enc:0, raw:linha};
+  return {
+    base: m[1].trim(),
+    tier: parseInt(m[2]),
+    enc:  parseInt(m[3]||'0'),
+    raw:  linha,
+  };
+}
+
+// Busca a receita pelo nome base e tier no banco gerado
+function rgBuscarReceita(base, tier, enc){
+  const all = todasReceitas();
+  // Busca exata
+  let r = all.find(x => {
+    const nome = x.nome||x.n||'';
+    const t = x.t||x.tier||8;
+    const e = x.enc||0;
+    return nome.toLowerCase().startsWith(base.toLowerCase()) && t===tier && e===enc;
+  });
+  if(!r){
+    // Busca parcial
+    r = all.find(x => {
+      const nome = x.nome||x.n||'';
+      const t = x.t||x.tier||8;
+      const e = x.enc||0;
+      return nome.toLowerCase().includes(base.toLowerCase()) && t===tier && e===enc;
+    });
+  }
+  return r||null;
+}
+
+// Calcula custo de craft de uma receita (sem foco)
+function rgCustoCraft(receita, retPct, taxaMkt){
+  if(!receita) return null;
+  const mats = receita.mats||[];
+  let custo = 0;
+  const detalhes = mats.map(m => {
+    const nome = m.n||m.nome||'';
+    const p = getP(nome);
+    const pu = p ? p.pm : 0;
+    const q = m.q||m.qtd||0;
+    custo += pu * q;
+    return {nome, q, pu, total: pu*q, semPreco: !p};
+  });
+  const retorno = custo * (retPct/100);
+  const custoEf = Math.round(custo - retorno);
+  return {custoEf, detalhes, semPreco: detalhes.some(d=>d.semPreco)};
+}
+
+// Calcula custo da Rota B: craft base + comprar encantamento
+function rgRotaB(item){
+  const {base, tier, enc, raw} = item;
+  if(enc === 0) return null; // sem encantamento não há rota B
+
+  // Buscar receita base (.0)
+  const recBase = rgBuscarReceita(base, tier, 0);
+  if(!recBase) return null;
+
+  const retPct = parseFloat(document.getElementById('rg-ret')?.value)||15.2;
+  const taxaMkt = parseFloat(document.getElementById('rg-taxa')?.value)||3;
+
+  const craftBase = rgCustoCraft(recBase, retPct, taxaMkt);
+  if(!craftBase) return null;
+
+  // Quantidade de encantamento
+  const cat = recBase.cat||'Armaduras';
+  const mao = recBase.mao||'';
+  const qtdEnc = getEncQtd(cat, mao);
+
+  // Tipo de encantamento
+  const encTipoMap = {1:'RUNE', 2:'SOUL', 3:'RELIC'};
+  const encKey = encTipoMap[enc];
+  if(!encKey) return null;
+
+  const precoEnc = rgEncPrecos['T'+tier+'_'+encKey] || 0;
+  const custoEnc = qtdEnc * precoEnc;
+  const custoTotalB = craftBase.custoEf + custoEnc;
+
+  return {custoB: custoTotalB, custoBase: craftBase.custoEf, custoEnc, qtdEnc, encKey, precoEnc, semPreco: craftBase.semPreco};
+}
+
+function rgCalcular(){
+  const input = document.getElementById('rg-input')?.value||'';
+  const retPct = parseFloat(document.getElementById('rg-ret')?.value)||15.2;
+  const taxaMkt = parseFloat(document.getElementById('rg-taxa')?.value)||3;
+  const linhas = input.split('\n').map(l=>l.trim()).filter(Boolean);
+
+  if(!linhas.length){
+    alert('Cole pelo menos um item na lista.');
+    return;
+  }
+
+  rgResultados = [];
+  let nCraftDireto=0, nEncBase=0, economiaTot=0;
+
+  rgResultados = linhas.map(linha => {
+    const item = rgParseItem(linha);
+    if(!item) return {raw:linha, erro:'Formato inválido'};
+
+    const {base, tier, enc, raw} = item;
+
+    // Rota A: craft direto encantado
+    const recA = rgBuscarReceita(base, tier, enc);
+    let rotaA = null;
+    if(recA){
+      rotaA = rgCustoCraft(recA, retPct, taxaMkt);
+    }
+
+    // Rota B: craft base + encantar
+    let rotaB = null;
+    if(enc > 0){
+      rotaB = rgRotaB(item);
+    }
+
+    // Decisão
+    let recomendacao = 'indefinido';
+    let economia = 0;
+    let melhor = null;
+
+    if(rotaA && rotaB){
+      if(rotaA.custoEf < rotaB.custoB){
+        recomendacao = 'craft_direto';
+        economia = rotaB.custoB - rotaA.custoEf;
+        melhor = rotaA.custoEf;
+        nCraftDireto++;
+      } else if(rotaB.custoB < rotaA.custoEf){
+        recomendacao = 'encantar_base';
+        economia = rotaA.custoEf - rotaB.custoB;
+        melhor = rotaB.custoB;
+        nEncBase++;
+      } else {
+        recomendacao = 'igual';
+        melhor = rotaA.custoEf;
+      }
+      economiaTot += economia;
+    } else if(rotaA && !rotaB){
+      recomendacao = enc===0 ? 'so_craft' : 'craft_direto';
+      melhor = rotaA.custoEf;
+      nCraftDireto++;
+    } else if(!rotaA && rotaB){
+      recomendacao = 'encantar_base';
+      melhor = rotaB.custoB;
+      nEncBase++;
+    } else {
+      recomendacao = 'nao_encontrado';
+    }
+
+    const cat = recA?.cat||recB?.cat||'?';
+    const mao = recA?.mao||'';
+    const qtdEnc = rotaB?.qtdEnc||getEncQtd(cat,mao);
+    const encNomes = {1:'Runa', 2:'Alma', 3:'Relíquia'};
+
+    return {
+      raw, base, tier, enc, cat, mao,
+      nomeCompleto: `${base} T${tier}${enc>0?'.'+enc:''}`,
+      imgId: recA ? resolveImg(recA.nome||recA.n||'', tier) : resolveImg(base+' T'+tier, tier),
+      rotaA, rotaB, recomendacao, economia, melhor,
+      encNome: encNomes[enc]||'',
+      qtdEnc,
+    };
+  });
+
+  // Atualizar summary
+  document.getElementById('rg-summary').style.display='grid';
+  document.getElementById('rg-result').style.display='block';
+  document.getElementById('rg-empty').style.display='none';
+  document.getElementById('rgs-total').textContent = rgResultados.length;
+  document.getElementById('rgs-craft').textContent = nCraftDireto;
+  document.getElementById('rgs-enc').textContent = nEncBase;
+  document.getElementById('rgs-eco').textContent = fmt(economiaTot);
+
+  // Renderizar linhas
+  const encCorMap = {1:'#4CAF50', 2:'#2196F3', 3:'#9C27B0'};
+  document.getElementById('rg-rows').innerHTML = rgResultados.map((r,i) => {
+    const custoA = r.rotaA ? r.rotaA.custoEf : null;
+    const custoB = r.rotaB ? r.rotaB.custoB : null;
+    const eco = r.economia;
+    const isMelhorA = r.recomendacao==='craft_direto'||r.recomendacao==='so_craft';
+    const isMelhorB = r.recomendacao==='encantar_base';
+    const isNF = r.recomendacao==='nao_encontrado';
+
+    let badge;
+    if(isNF)             badge=`<span class="rg-notfound">Não encontrado</span>`;
+    else if(r.recomendacao==='igual') badge=`<span class="rg-equal">= Igual</span>`;
+    else if(isMelhorA)   badge=`<span class="rg-win">⚔️ Craft direto</span>`;
+    else if(isMelhorB)   badge=`<span class="rg-win">✨ Encantar base</span>`;
+    else                 badge=`<span class="rg-notfound">Incompleto</span>`;
+
+    const encBadge = r.enc>0
+      ? `<span style="font-size:10px;color:${encCorMap[r.enc]||'var(--dim)'};font-family:'Barlow Condensed';font-weight:700">
+           ${r.qtdEnc}× ${r.encNome||''}
+         </span>`
+      : `<span style="color:var(--dim);font-size:10px">—</span>`;
+
+    return `<div class="rg-row" style="display:flex;align-items:center">
+      <div class="rg-cell" style="width:34px">${iimg(r.imgId,28)}</div>
+      <div class="rg-cell rg-nome" style="flex:1">
+        <div style="font-weight:500;color:var(--bright)">${r.nomeCompleto||r.raw}</div>
+        <div style="font-size:10px;color:var(--dim)">${r.cat||''}</div>
+      </div>
+      <div class="rg-cell" style="width:70px;text-align:right">${tb(r.tier,r.enc)}</div>
+      <div class="rg-cell" style="width:110px;text-align:right">
+        <div class="rg-val" style="color:${isMelhorA&&custoA?'var(--profit)':'var(--bright)'}">${custoA!=null?fmt(custoA):'—'}</div>
+      </div>
+      <div class="rg-cell" style="width:110px;text-align:right">
+        <div class="rg-val" style="color:${isMelhorB&&custoB?'var(--profit)':'var(--bright)'}">${custoB!=null?fmt(custoB):'—'}</div>
+        ${r.rotaB?`<div style="font-size:9px;color:var(--dim)">(base ${fmt(r.rotaB.custoBase)} + enc ${fmt(r.rotaB.custoEnc)})</div>`:''}
+      </div>
+      <div class="rg-cell" style="width:90px;text-align:right">
+        <div class="rg-val" style="color:${eco>0?'var(--profit)':'var(--dim)'}">${eco>0?fmt(eco):'—'}</div>
+      </div>
+      <div class="rg-cell" style="width:90px;text-align:right">${encBadge}</div>
+      <div class="rg-cell" style="width:110px;text-align:center;padding-left:8px">${badge}</div>
+    </div>`;
+  }).join('');
+}
+
+function rgExportar(){
+  if(!rgResultados.length){alert('Calcule primeiro.');return;}
+  const h='item,tier,enc,categoria,custo_rota_a,custo_rota_b,economia,recomendacao';
+  const rows=rgResultados.map(r=>
+    `"${r.nomeCompleto||r.raw}",${r.tier||''},${r.enc||0},"${r.cat||''}",${r.rotaA?r.rotaA.custoEf:0},${r.rotaB?r.rotaB.custoB:0},${r.economia||0},"${r.recomendacao||''}"`
+  );
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+[h,...rows].join('\r\n'));
+  a.download='regear-lista.csv';a.click();
+}
+
+
+populateRecFilters();populateCalc();populateScanFilters();populateEnc();
+rgInit();
+renderDash();renderRec();renderPrecos();renderScan();renderMercado();renderAlertas();renderConfig();renderMats();
+</script>
+</body>
+</html>
