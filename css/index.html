@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GallaMaster 2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">GM</div>
+      <div class="brand-text">
+        <div class="brand-name">GallaMaster</div>
+        <div class="brand-version">v2.0</div>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Mercado</div>
+      <button class="nav-item active" data-tab="recursos">
+        <span class="nav-icon">◧</span> Recursos
+      </button>
+      <button class="nav-item" data-tab="busca">
+        <span class="nav-icon">⌕</span> Busca de Preços
+      </button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Em breve</div>
+      <button class="nav-item" disabled><span class="nav-icon">⚒</span> Craft Comparativo</button>
+      <button class="nav-item" disabled><span class="nav-icon">▤</span> Base de Itens</button>
+      <button class="nav-item" disabled><span class="nav-icon">◎</span> Re-gears</button>
+      <button class="nav-item" disabled><span class="nav-icon">📋</span> Pedidos</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="content">
+
+    <!-- ═══ TAB: RECURSOS ═══ -->
+    <section id="tab-recursos" class="tab active">
+      <header class="tab-header">
+        <div>
+          <h1>Recursos</h1>
+          <p class="tab-sub">Preços de mercado via Albion Online Data Project</p>
+        </div>
+        <div class="header-actions">
+          <select id="server-select" class="select">
+            <option value="west">Américas (West)</option>
+            <option value="europe">Europa</option>
+            <option value="east">Ásia (East)</option>
+          </select>
+          <button id="refresh-btn" class="btn btn-primary">
+            <span class="btn-icon">↻</span> Atualizar Preços
+          </button>
+        </div>
+      </header>
+      <div id="status-bar" class="status-bar"></div>
+      <div class="city-tabs" id="city-tabs"></div>
+      <div class="resource-grid" id="resource-grid"></div>
+    </section>
+
+    <!-- ═══ TAB: BUSCA DE PREÇOS ═══ -->
+    <section id="tab-busca" class="tab">
+      <header class="tab-header">
+        <div>
+          <h1>Busca de Preços</h1>
+          <p class="tab-sub">Pesquise qualquer item, recurso ou artefato e compare o preço em todas as cidades</p>
+        </div>
+      </header>
+
+      <!-- Search box -->
+      <div class="search-box">
+        <div class="search-controls">
+          <div class="search-input-wrap">
+            <span class="search-icon">⌕</span>
+            <input type="text" id="search-input"
+              placeholder="Ex: Espada Larga, Barra de Metal, Lâmina Demoníaca, Runa...">
+            <div id="search-dropdown"></div>
+          </div>
+        </div>
+
+        <!-- Tier selector -->
+        <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px;">
+          <div class="selector-group">
+            <span class="selector-label">Tier</span>
+            <div id="search-tier-btns">
+              <button class="tier-btn" data-tier="4">T4</button>
+              <button class="tier-btn" data-tier="5">T5</button>
+              <button class="tier-btn active" data-tier="6">T6</button>
+              <button class="tier-btn" data-tier="7">T7</button>
+              <button class="tier-btn" data-tier="8">T8</button>
+            </div>
+          </div>
+
+          <!-- Enchant selector -->
+          <div class="selector-group">
+            <span class="selector-label">Encantamento</span>
+            <div id="search-enc-btns">
+              <button class="enc-btn active" data-enc="0">.0 Base</button>
+              <button class="enc-btn" data-enc="1">.1 Runa</button>
+              <button class="enc-btn" data-enc="2">.2 Alma</button>
+              <button class="enc-btn" data-enc="3">.3 Relíquia</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="search-result">
+        <div class="search-empty">
+          <div style="font-size:40px;margin-bottom:14px;">⌕</div>
+          <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Pesquise um item</div>
+          <div style="font-size:13px;color:var(--text-faint)">
+            Digite o nome de qualquer item, material ou artefato do Albion Online.<br>
+            Você verá o preço de venda e compra em todas as cidades lado a lado.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="/js/data.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/app.js"></script>
+<script>
+  // Tab navigation
+  document.querySelectorAll('.nav-item[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-'+tab).classList.add('active');
+      if (tab === 'busca' && !window._searchInitialized) {
+        searchInit();
+        window._searchInitialized = true;
+      }
+    });
+  });
+</script>
+</body>
+</html>
