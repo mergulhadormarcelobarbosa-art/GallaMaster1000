@@ -1,9 +1,9 @@
 /**
- * GallaMaster 2.0 — App principal (Vercel edition)
+ * GallaMaster 2.0 — App principal
  */
 
 let currentCity = 'Caerleon';
-let priceData   = {};
+let priceData   = {};  // item_id → { city_key → { sell, buy, date } }
 let lastFetch   = null;
 
 const statusBar    = document.getElementById('status-bar');
@@ -11,6 +11,18 @@ const refreshBtn   = document.getElementById('refresh-btn');
 const cityTabsEl   = document.getElementById('city-tabs');
 const gridEl       = document.getElementById('resource-grid');
 const serverSelect = document.getElementById('server-select');
+
+// A API retorna os nomes de cidade assim — precisamos mapear
+const API_CITY_MAP = {
+  'Caerleon':     'Caerleon',
+  'Martlock':     'Martlock',
+  'Lymhurst':     'Lymhurst',
+  'Bridgewatch':  'Bridgewatch',
+  'Thetford':     'Thetford',
+  'Fort Sterling':'FortSterling',   // API retorna com espaço, normalizamos
+  'FortSterling': 'FortSterling',
+  'Brecilien':    'Brecilien',
+};
 
 // ── Inicialização ──────────────────────────────────────────────────────
 function init() {
@@ -58,8 +70,8 @@ async function fetchPrices() {
   refreshBtn.disabled = true;
   refreshBtn.querySelector('.btn-icon').classList.add('spin');
 
-  // Apenas enc 0 (base) por enquanto — sem recursos encantados no mercado
-  const itemIds = [];
+  // Só quality=1 (normal) para recursos — mais limpo e suficiente
+  const itemIds   = [];
   RESOURCES.forEach(res => {
     TIERS.forEach(tier => {
       itemIds.push(`T${tier}_${res.key}`);
@@ -68,30 +80,35 @@ async function fetchPrices() {
 
   const server    = serverSelect.value;
   const locations = CITIES.join(',');
-  const CHUNK     = 30;
+  const CHUNK     = 25;
   const newData   = {};
   let errors      = 0;
 
-  // Divide em chunks para não exceder limite de URL
   for (let i = 0; i < itemIds.length; i += CHUNK) {
     const chunk = itemIds.slice(i, i + CHUNK);
     try {
-      const url  = `/api/prices?items=${chunk.join(',')}&server=${server}&locations=${locations}`;
-      const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      const url  = `/api/prices?items=${chunk.join(',')}&server=${server}&locations=${locations}&qualities=1`;
+      const resp = await fetch(url, { signal: AbortSignal.timeout(20000) });
       if (!resp.ok) { errors++; continue; }
       const data = await resp.json();
       if (data.error) { errors++; continue; }
 
       data.forEach(entry => {
+        // Normaliza nome da cidade (Fort Sterling → FortSterling)
+        const cityKey = API_CITY_MAP[entry.city] || entry.city.replace(/\s+/g, '');
         if (!newData[entry.item_id]) newData[entry.item_id] = {};
-        newData[entry.item_id][entry.city] = {
-          sell: entry.sell_price_min,
-          buy:  entry.buy_price_max,
-          date: entry.sell_price_min_date,
-        };
+        // Só guarda quality 1 (normal) com preço > 0
+        if (entry.quality === 1) {
+          newData[entry.item_id][cityKey] = {
+            sell: entry.sell_price_min  > 0 ? entry.sell_price_min  : 0,
+            buy:  entry.buy_price_max   > 0 ? entry.buy_price_max   : 0,
+            date: entry.sell_price_min_date,
+          };
+        }
       });
     } catch (e) {
       errors++;
+      console.error('Fetch error:', e);
     }
   }
 
@@ -101,10 +118,15 @@ async function fetchPrices() {
   refreshBtn.querySelector('.btn-icon').classList.remove('spin');
 
   const time = lastFetch.toLocaleTimeString('pt-BR');
-  if (errors > 0 && Object.keys(priceData).length === 0) {
-    setStatus(`✗ Falha ao buscar preços. Verifique a conexão.`, 'error');
+  const total = Object.keys(newData).length;
+
+  if (total === 0) {
+    setStatus(`✗ Nenhum preço retornado. Tente novamente.`, 'error');
   } else {
-    setStatus(`✓ Atualizado às ${time}${errors ? ` · ${errors} lote(s) falharam` : ''}`, 'success');
+    setStatus(
+      `✓ ${total} itens atualizados às ${time}` + (errors ? ` · ${errors} lote(s) falharam` : ''),
+      'success'
+    );
   }
 
   renderGrid();
@@ -122,31 +144,28 @@ function renderGrid() {
 
 function renderCard(res) {
   const tiers = TIERS.map(tier => {
-    const id        = `T${tier}_${res.key}`;
-    const cityData  = priceData[id]?.[currentCity];
-    const sell      = cityData?.sell || 0;
-    const buy       = cityData?.buy  || 0;
-    const hasData   = sell > 0 || buy > 0;
+    const id       = `T${tier}_${res.key}`;
+    const data     = priceData[id]?.[currentCity];
+    const sell     = data?.sell || 0;
+    const buy      = data?.buy  || 0;
 
-    // Data freshness
+    // Frescor do dado
     let freshness = '';
-    if (cityData?.date) {
-      const hours = (Date.now() - new Date(cityData.date)) / 3_600_000;
-      if (hours < 1)       freshness = '< 1h';
+    if (data?.date && data.date !== '0001-01-01T00:00:00') {
+      const hours = (Date.now() - new Date(data.date)) / 3_600_000;
+      if      (hours < 1)  freshness = '< 1h';
       else if (hours < 24) freshness = `${Math.floor(hours)}h`;
-      else                 freshness = `${Math.floor(hours/24)}d`;
+      else                 freshness = `${Math.floor(hours / 24)}d`;
     }
 
     return `
       <div class="tier-row">
         <span class="tlabel" style="color:${res.color}">T${tier}</span>
         <div class="tprices">
-          <div class="tprice-sell ${sell ? '' : 'empty'}" title="Venda">
+          <div class="tprice-sell ${sell ? '' : 'empty'}">
             ${sell ? '↑ ' + fmt(sell) : '—'}
           </div>
-          <div class="tprice-buy ${buy ? '' : 'empty'}" title="Compra">
-            ${buy ? '↓ ' + fmt(buy) : ''}
-          </div>
+          ${buy ? `<div class="tprice-buy">↓ ${fmt(buy)}</div>` : ''}
         </div>
         <span class="tfresh">${freshness}</span>
       </div>`;
@@ -156,7 +175,8 @@ function renderCard(res) {
     <div class="resource-card">
       <div class="resource-head">
         <div class="resource-icon">
-          <img src="${CDN}T5_${res.key}.png?size=64" alt="" onerror="this.style.display='none'">
+          <img src="${CDN}T5_${res.key}.png?size=64" alt=""
+               onerror="this.style.display='none'">
         </div>
         <div>
           <div class="resource-name" style="color:${res.color}">${res.name}</div>
@@ -164,7 +184,9 @@ function renderCard(res) {
         </div>
       </div>
       <div class="tier-header">
-        <span>Tier</span><span>Venda · Compra</span><span>Atualiz.</span>
+        <span>Tier</span>
+        <span>Venda · Compra</span>
+        <span style="text-align:right">Atualiz.</span>
       </div>
       <div class="resource-tiers">${tiers}</div>
     </div>`;
